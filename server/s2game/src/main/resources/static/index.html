@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Spring Boot Test Caller</title>
+  <style>
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial; padding: 2rem; }
+    #serverResponse { margin-top: 1rem; padding: 0.75rem; border: 1px solid #ddd; background: #f9f9f9; }
+  </style>
+</head>
+<body>
+  <h1>Call Spring Boot /test</h1>
+  <p>Click the button to call the server endpoint implemented in <code>Testing.java</code>.</p>
+  <button id="callBtn">Call /test</button>
+  <div id="serverResponse">(response will appear here)</div>
+  <input id="name">
+  <input id="messageInput" placeholder="Enter message"><button id="sendBtn">Send</button>
+  <button id="getMessages">Get Messages</button>
+  <p id="chatbox"></p>
+
+  <script src="main.js"></script>
+  <script>
+    document.getElementById('callBtn').addEventListener('click', () => {
+      window.callTest().catch(() => {});
+    });
+
+    document.getElementById('sendBtn').addEventListener('click', () => {
+      const name = document.getElementById('name').value;
+      const msg = document.getElementById('messageInput').value;
+      window.sendMessage(name, msg)
+        .then(response => {
+          document.getElementById('messageInput').value = '';
+        })
+        .catch(() => {});
+    });
+
+    document.getElementById('getMessages').addEventListener('click', () => {
+      window.getMessages()
+        .then(response => {
+            // display the message hashmap from the server in the chatbox on individual lines
+            const chatbox = document.getElementById('chatbox');
+            chatbox.innerHTML = '';
+            for (const [key, value] of Object.entries(response).reverse()) {
+                const p = document.createElement('p');
+                p.textContent = value;
+                chatbox.appendChild(p);
+            }
+        })
+        .catch(() => {});
+    });
+  </script>
+</body>
+</html>
