@@ -1,1 +1,0 @@
-Controllers are objects that communicate with the server.

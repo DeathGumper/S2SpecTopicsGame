@@ -1,0 +1,9 @@
+{
+    "name": "Fire Slime",
+    "stats": {
+        "health": 150,
+        "attack": 25,
+        "defense": 10,
+        "speed": 15
+    }
+}

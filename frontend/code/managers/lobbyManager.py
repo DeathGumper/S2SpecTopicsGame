@@ -10,5 +10,8 @@ from controllers.lobbyController import lobbyController
 
 class lobbyManager:
     lobby_controller = None
-    def __init__(self):
-        self.lobby_controller = lobbyController()
+    game_controller = None
+    
+    def __init__(self, game_controller, lobby_controller):
+        self.game_controller = game_controller
+        self.lobby_controller = lobby_controller

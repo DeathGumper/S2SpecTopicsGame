@@ -1,1 +1,0 @@
-Managers are objects that will handle any request (Button press, Server event, etc.)
