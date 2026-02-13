@@ -7,37 +7,32 @@ Ex: Calling Service due to server saying enemy creature attacked.
 """
 import pygame
 from controllers.gameController import gameController
-from services.uiService import UIService
+from controllers.lobbyController import lobbyController
+from services.sceneService import SceneService
 
 
-class gameManager:
-    # Controllers
-    game_controller = None
-    lobby_controller = None
+class GameManager:
 
     # Services
-    uiService = None
+    sceneService = None
 
-    def __init__(self, game_controller, lobby_controller):
-        # Controller declarations
-        self.game_controller = game_controller
-        self.lobby_controller = lobby_controller
+    def __init__(self):
 
         # Service declarations
-        self.uiService = UIService()
-
-        player = None
+        self.sceneService = SceneService()
 
         # Temp of random buttons
-        self.uiService.makeButton("Make creature", lambda: self.spawnCreature("fireslime"), position=(200, 200))
-        self.uiService.makeButton("Make lobby", lambda: self.lobby_controller.createLobby(input("id? "), input("name? ")), position=(400, 300))
-        self.uiService.makeButton("Join lobby", lambda: self.lobby_controller.joinLobby(input("id? "), input("name? ")), position=(400, 400))
+        # self.uiService.makeButton("Make creature", lambda: self.spawnCreature("fireslime"), position=(200, 200))
+        # self.uiService.makeButton("Make lobby", lambda: self.lobby_controller.createLobby(input("id? "), input("name? ")), position=(400, 300))
+        # self.uiService.makeButton("Join lobby", lambda: self.lobby_controller.joinLobby(input("id? "), input("name? ")), position=(400, 400))
 
+
+    # Temporary
     def spawnCreature(self, creature_type):
         creature = self.game_controller.spawnCreature(creature_type)
 
     def loop(self):
-        self.uiService.checkClicks()
+        self.sceneService.update()
 
     def render(self, surface: pygame.Surface):
-        self.uiService.render(surface)
+        self.sceneService.render(surface)

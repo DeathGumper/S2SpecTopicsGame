@@ -8,28 +8,40 @@ Will begin the main application loop.
 
 # Imports
 import pygame
+import pygame.time
 
-from controllers.gameController import gameController
-from controllers.lobbyController import lobbyController
-from managers.gameManager import gameManager
-from managers.lobbyManager import lobbyManager
+from controllers.gameController import GameController
+from controllers.lobbyController import LobbyController
+from managers.gameManager import GameManager
+from managers.lobbyManager import LobbyManager
+
+from utils.CONSTANTS import WINDOWED_SIZE
 
 # Init pygame
 pygame.init()
 
+def toggleFullscreen(window: pygame.Surface):
+    # Toggle the fullscreen state
+    if window.get_flags() & pygame.FULLSCREEN:
+        window = pygame.display.set_mode(WINDOWED_SIZE)
+    else:
+        window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+
+    return window
+
 def main():
-    # Controller declarations
-    lobby_controller = lobbyController()
-    game_controller = gameController(lobby_controller)
 
     # Manager declarations
-    game_manager = gameManager(game_controller, lobby_controller)
-    lobby_manager = lobbyManager(game_controller, lobby_controller)
+    gameManager = GameManager()
+    lobbyManager = LobbyManager()
 
     # Window declaration
     # window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-    window = pygame.display.set_mode((800, 600))
+    window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     print("App Started")
+
+    # Clock
+    clock = pygame.time.Clock()
     
     while True:
         window.fill((255, 255, 255)) # Clear the window with a white background
@@ -46,14 +58,16 @@ def main():
                     # Escape key = Quit pygame
                     pygame.quit()
                     return
+                if event.key == pygame.K_f:
+                    window = toggleFullscreen(window)
                 
         # Loops
-        game_manager.loop()
+        gameManager.loop()
                 
         # Render game visuals
-        game_manager.render(window)
+        gameManager.render(window)
 
         pygame.display.flip() # Update the display
                 
-
+        clock.tick(30)
 main()

@@ -1,14 +1,19 @@
 package com.spectopics.s2game.models;
 
+import java.util.UUID;
+
 import lombok.Data;
 
 @Data
 public class Player {
     private String name;
-    private Creature[] creatures = new Creature[5];
+    private String id;
+    private Creature[] creatures;
 
     public Player(String name) {
         this.name = name;
+        this.id = UUID.randomUUID().toString();
+        this.creatures = new Creature[5];
     }
 
     public boolean AddCreature(Creature creature) {

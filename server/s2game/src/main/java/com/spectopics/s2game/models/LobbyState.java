@@ -2,25 +2,20 @@ package com.spectopics.s2game.models;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import lombok.Data;
 
 @Data
 public class LobbyState {
+    private String name;
     private String id;
     private List<Player> players;
     private static List<LobbyState> lobbies = new ArrayList<LobbyState>();
-    // All existing players
+    // All existing players connected to the game
     private static List<Player> allPlayers = new ArrayList<Player>();
 
-    // temporary
-    public LobbyState() {
-        this.id = UUID.randomUUID().toString();
-        this.players = new ArrayList<Player>();
-    }
-
     public LobbyState(String id) {
+        this.name = id + " lobby";
         this.id = id;
         this.players = new ArrayList<Player>();
     }
@@ -30,6 +25,9 @@ public class LobbyState {
     }
 
     public static LobbyState AddNew(String id) {
+        if (GetLobby(id) != null) {
+            return null;
+        }
         LobbyState lobby = new LobbyState(id);
         lobbies.add(lobby);
 
@@ -52,9 +50,10 @@ public class LobbyState {
     }
     
     // Gets an player that is connected to the server.
-    public static Player GetPlayer(String name) {
+    public static Player GetPlayerById(String id) {
         for (Player player : allPlayers) {
-            if (player.getName().equals(name)) {
+            System.out.println(player.getId() + "| " + id);
+            if (player.getId().equals(id)) {
                 return player;
             }
         }

@@ -15,10 +15,10 @@ import tools.jackson.databind.ObjectWriter;
 @RequestMapping("/creature")
 public class CreatureController {
     private ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-    @GetMapping("/spawn/{creatureType}/{playerName}")
-    public String spawnCreature(@PathVariable String creatureType, @PathVariable String playerName) {
+    @GetMapping("/spawn/{creatureType}/{playerId}")
+    public String spawnCreature(@PathVariable String creatureType, @PathVariable String playerId) {
         Creature creature = new Creature().GetNew(creatureType);
-        LobbyState.GetPlayer(playerName).AddCreature(creature);
+        LobbyState.GetPlayerById(playerId).AddCreature(creature);
         String json = ow.writeValueAsString(creature);
         return json;
     }
