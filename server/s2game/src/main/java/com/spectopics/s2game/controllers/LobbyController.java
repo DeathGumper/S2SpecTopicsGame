@@ -1,11 +1,14 @@
 package com.spectopics.s2game.controllers;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.spectopics.dto.LobbyingDto;
 import com.spectopics.s2game.models.LobbyState;
 import com.spectopics.s2game.models.Player;
 
@@ -18,33 +21,35 @@ import tools.jackson.databind.ObjectWriter;
 public class LobbyController {
     private ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
-    // Create a player, this will be the way for the client to connect to the server
-    @GetMapping("/makePlayer/{playerName}")
-    public String makePlayer(@PathVariable String playerName) {
-        Player player = LobbyState.MakePlayer(playerName);
-        String json = ow.writeValueAsString(player);
-        return json;
-    }
-        
-
     @GetMapping("/join/{lobbyId}/{playerName}")
-    public String joinLobby(@PathVariable String lobbyId, @PathVariable String playerName) {
+    public ResponseEntity<?> joinLobby(@PathVariable String lobbyId, @PathVariable String playerName) {
         LobbyState lobby = LobbyState.GetLobby(lobbyId);
         if (lobby == null) {
-            return "Lobby not found";
+            System.err.println("Failed bc lobby not found");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lobby not found");
         }
 
-        lobby.AddPlayer(LobbyState.GetPlayer(playerName));
-        String json = ow.writeValueAsString(lobby);
-        return json;
+        Player player = LobbyState.MakePlayer(playerName);
+        lobby.AddPlayer(player);
+        LobbyingDto dto = new LobbyingDto(lobby, player);
+        String json = ow.writeValueAsString(dto);
+        return ResponseEntity.ok(json);
     }
 
     @GetMapping("/create/{lobbyId}/{playerName}")
-    public String createLobby(@PathVariable String lobbyId, @PathVariable String playerName) {
+    public ResponseEntity<?> createLobby(@PathVariable String lobbyId, @PathVariable String playerName) {
         LobbyState lobby = LobbyState.AddNew(lobbyId);
-        lobby.AddPlayer(LobbyState.GetPlayer(playerName));
-        String json = ow.writeValueAsString(lobby);
+        if (lobby == null) {
+            System.err.println("Failed bc id in use");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id in use");
+        }
+
+        Player player = LobbyState.MakePlayer(playerName);
+        lobby.AddPlayer(player);
+
+        LobbyingDto dto = new LobbyingDto(lobby, player);
+        String json = ow.writeValueAsString(dto);
         System.out.println("Created Lobby State:" + json);
-        return json;
+        return ResponseEntity.ok(json);
     }   
 }
