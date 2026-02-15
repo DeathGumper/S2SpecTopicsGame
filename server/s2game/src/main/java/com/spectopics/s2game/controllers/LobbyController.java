@@ -33,19 +33,19 @@ public class LobbyController {
         lobby.AddPlayer(player);
         LobbyingDto dto = new LobbyingDto(lobby, player);
         String json = ow.writeValueAsString(dto);
+        System.out.println("Joined Lobby State:" + json);
         return ResponseEntity.ok(json);
     }
 
     @GetMapping("/create/{lobbyId}/{playerName}")
     public ResponseEntity<?> createLobby(@PathVariable String lobbyId, @PathVariable String playerName) {
-        LobbyState lobby = LobbyState.AddNew(lobbyId);
+
+        Player player = LobbyState.MakePlayer(playerName);
+        LobbyState lobby = LobbyState.AddNew(lobbyId, player);
         if (lobby == null) {
             System.err.println("Failed bc id in use");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id in use");
         }
-
-        Player player = LobbyState.MakePlayer(playerName);
-        lobby.AddPlayer(player);
 
         LobbyingDto dto = new LobbyingDto(lobby, player);
         String json = ow.writeValueAsString(dto);

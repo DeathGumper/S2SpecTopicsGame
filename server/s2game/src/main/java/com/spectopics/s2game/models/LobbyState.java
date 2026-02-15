@@ -9,26 +9,29 @@ import lombok.Data;
 public class LobbyState {
     private String name;
     private String id;
+    private Player owner;
     private List<Player> players;
     private static List<LobbyState> lobbies = new ArrayList<LobbyState>();
     // All existing players connected to the game
     private static List<Player> allPlayers = new ArrayList<Player>();
 
-    public LobbyState(String id) {
-        this.name = id + " lobby";
+    public LobbyState(String id, Player owner) {
+        this.owner = owner;
+        this.name = owner.getName() + "'s lobby";
         this.id = id;
         this.players = new ArrayList<Player>();
+        AddPlayer(owner);
     }
 
     public void AddPlayer(Player player) {
         this.players.add(player);
     }
 
-    public static LobbyState AddNew(String id) {
+    public static LobbyState AddNew(String id, Player owner) {
         if (GetLobby(id) != null) {
             return null;
         }
-        LobbyState lobby = new LobbyState(id);
+        LobbyState lobby = new LobbyState(id, owner);
         lobbies.add(lobby);
 
         return lobby;
