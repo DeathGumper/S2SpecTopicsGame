@@ -6,11 +6,9 @@ helps transfer the data from the server to the client, this will hold lobbyState
 
 from models.lobbyState import LobbyState
 from models.player import Player
+from dataclasses import dataclass
 
+@dataclass
 class LobbyingDto:
-    lobbyState: LobbyState = None
-    player: Player = None
-
-    def __init__(self, lobbyState: LobbyState, player: Player):
-        self.lobbyState = lobbyState
-        self.player = player
+    lobbyState: LobbyState
+    player: Player

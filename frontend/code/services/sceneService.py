@@ -1,5 +1,5 @@
 import pygame
-from scenes.scene import Scene
+from models.scene import Scene
 
 from controllers.lobbyController import lobbyController
 
@@ -33,12 +33,18 @@ class SceneService:
     def lobbyingSetup(self):
         # Get the lobbying scene
         lobbyingScene = self.getSceneByName("lobbying")
+
+        # Name input box
+        nameInput = lobbyingScene.makeInputBox((400, 100), (100, 40), defaultText="Name?")
+
+        # Id input box
+        idInput = lobbyingScene.makeInputBox((400, 200), (100, 40), defaultText="Id?")
         
         # Join Lobby and then go to lobby scene if successful
-        lobbyingScene.makeActionButton("Join", lambda: lobbyController.joinLobby(input("name? "), input("id? ")) and self.switchScene("lobby"), (100, 100))
+        lobbyingScene.makeActionButton("Join", lambda: lobbyController.joinLobby(nameInput.inputText, idInput.inputText) and self.switchScene("lobby"), (100, 100))
 
         # Create Lobby and then go to lobby scene if successful
-        lobbyingScene.makeActionButton("Create", lambda: lobbyController.createLobby(input("name? "), input("id? ")) and self.switchScene("lobby"), (100, 200))
+        lobbyingScene.makeActionButton("Create", lambda: lobbyController.createLobby(nameInput.inputText, idInput.inputText) and self.switchScene("lobby"), (100, 200))
 
     def lobbySetup(self):
         # Get the lobby scene

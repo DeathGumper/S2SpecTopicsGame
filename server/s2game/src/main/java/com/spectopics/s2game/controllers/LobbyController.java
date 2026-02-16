@@ -33,23 +33,42 @@ public class LobbyController {
         lobby.AddPlayer(player);
         LobbyingDto dto = new LobbyingDto(lobby, player);
         String json = ow.writeValueAsString(dto);
+        System.out.println("Joined Lobby State:" + json);
         return ResponseEntity.ok(json);
     }
 
     @GetMapping("/create/{lobbyId}/{playerName}")
     public ResponseEntity<?> createLobby(@PathVariable String lobbyId, @PathVariable String playerName) {
-        LobbyState lobby = LobbyState.AddNew(lobbyId);
+
+        Player player = LobbyState.MakePlayer(playerName);
+        LobbyState lobby = LobbyState.AddNew(lobbyId, player);
         if (lobby == null) {
             System.err.println("Failed bc id in use");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id in use");
         }
-
-        Player player = LobbyState.MakePlayer(playerName);
-        lobby.AddPlayer(player);
 
         LobbyingDto dto = new LobbyingDto(lobby, player);
         String json = ow.writeValueAsString(dto);
         System.out.println("Created Lobby State:" + json);
         return ResponseEntity.ok(json);
     }   
+
+    @GetMapping("/startGame/{lobbyId}/{playerId}")
+    public ResponseEntity<?> startGame(@PathVariable String lobbyId, @PathVariable String playerId) {
+        Player player = LobbyState.GetPlayerById(playerId);
+
+        LobbyState lobby = LobbyState.GetLobby(lobbyId);
+        if (lobby == null) {
+            System.err.println("Failed bc no lobby with id: " + lobbyId + " was found");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("no matching id");
+        }
+
+        if (lobby.StartGame(player)) {
+            System.err.println("Game started!");
+            return ResponseEntity.ok("Game Started");
+        }
+
+        System.err.println("Failed bc either already started or player is not the owner.");
+        return ResponseEntity.ok("Lobby either already started or player is not the owner."); 
+    }
 }

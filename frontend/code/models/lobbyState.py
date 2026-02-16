@@ -1,7 +1,13 @@
-class LobbyState:
-    id = None
-    players = None
+from dataclasses import dataclass
 
-    def __init__(self, id, players):
-        self.id = id
-        self.players = players
+from models.lobbySettings import LobbySettings
+
+@dataclass
+class LobbyState:
+    name: str
+    id: str
+    owner: object # Player object but i dont wanna import the class, just extra clutter
+    players: list
+    gameState: str
+    stageTimer: float
+    lobbySettings: LobbySettings
