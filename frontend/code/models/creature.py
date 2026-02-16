@@ -1,7 +1,7 @@
-class Creature:
-    def __init__(self, name, stats):
-        self.name = name
-        self.stats = stats
+from dataclasses import dataclass
 
-    def __repr__(self):
-        return f"Creature(name={self.name}, stats={self.stats})"
+@dataclass
+class Creature:
+    name: str
+    stats: object
+    totalSpeed: float

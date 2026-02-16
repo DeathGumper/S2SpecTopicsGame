@@ -8,6 +8,7 @@ Ex: Joining/Creating a lobby
 
 import pygame
 import urllib.request
+from dacite import from_dict
 
 from models.lobbyState import LobbyState
 from models.creature import Creature
@@ -24,10 +25,14 @@ class LobbyController:
         try:
             with urllib.request.urlopen(SERVER_URL + "/lobby/create/" + lobbyId + "/" + playerName) as response:
                 if 200 <= response.code < 300:
-                    responseLoaded = json.loads(response.read().decode('utf-8'))
-                    lobbyingDto = LobbyingDto(responseLoaded['lobbyState'], responseLoaded['player']) 
+                    dataDict = json.loads(response.read().decode('utf-8'))
+                    lobbyingDto = from_dict(data_class=LobbyingDto, data=dataDict)
                     self.lobbyState = lobbyingDto.lobbyState
                     self.player = lobbyingDto.player
+
+                    print(lobbyingDto)
+                    print(self.lobbyState)
+                    print(self.player)
                     return True
                 return response.code
         except urllib.error.HTTPError as e:
@@ -41,8 +46,8 @@ class LobbyController:
         try:
             with urllib.request.urlopen(SERVER_URL + "/lobby/join/" + lobbyId + "/" + playerName) as response:
                 if 200 <= response.code < 300:
-                    responseLoaded = json.loads(response.read().decode('utf-8'))
-                    lobbyingDto = LobbyingDto(responseLoaded['lobbyState'], responseLoaded['player']) 
+                    dataDict = json.loads(response.read().decode('utf-8'))
+                    lobbyingDto = from_dict(data_class=LobbyingDto, data=dataDict)
                     self.lobbyState = lobbyingDto.lobbyState
                     self.player = lobbyingDto.player
 
@@ -59,6 +64,18 @@ class LobbyController:
             return False
         
     def startLobby(self):
-        pass
+        try:
+            with urllib.request.urlopen(SERVER_URL + "/lobby/startGame/" + self.lobbyState.id + "/" + self.player.id) as response:
+                if 200 <= response.code < 300:
+                    responseLoaded = json.loads(response.read().decode('utf-8'))
+                    print(responseLoaded)
+                    return responseLoaded
+                return response.code
+        except urllib.error.HTTPError as e:
+            print(f"HTTP Error: Status code {e.code} - {e.reason}")
+            return False
+        except Exception as e:
+            print(str(e))
+            return False
     
 lobbyController = LobbyController()

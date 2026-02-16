@@ -1,8 +1,8 @@
-class Player:
-    # UUID
-    name = None
-    creatures = None
+from dataclasses import dataclass
+from models.creature import Creature
 
-    def __init__(self, name, creatures):
-        self.name = name
-        self.creatures = creatures
+@dataclass
+class Player:
+    name: str
+    id: str #UUID from backend
+    creatures: list
