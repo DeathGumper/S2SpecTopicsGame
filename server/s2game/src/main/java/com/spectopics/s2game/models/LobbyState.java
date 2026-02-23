@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.spectopics.enums.StageState;
+import com.spectopics.s2game.services.BattleService;
 
 import lombok.Data;
 
@@ -12,10 +13,15 @@ public class LobbyState {
     private String name;
     private String id;
     private Player owner;
+
     private List<Player> players;
+    private List<Battle> battles;
+
     private StageState gameState; // Maybe make this into an enum (LOBBYING, BUYSTAGE, GAMESTAGE)
     private float stageTimer;
     private LobbySettings lobbySettings;
+    private BattleService battleService;
+
     private Thread updater;
 
     public LobbyState(String id, Player owner) {
@@ -24,9 +30,12 @@ public class LobbyState {
         this.name = owner.getName() + "'s lobby";
         this.id = id;
         this.players = new ArrayList<Player>();
+
         AddPlayer(owner);
         this.stageTimer = 0;
         this.gameState = StageState.LOBBY; // In the lobby menu, displaying players in the lobby, not yet into buy phase
+
+        this.battleService = new BattleService();
     }
 
     public boolean StartGame(Player requestMaker) {
@@ -38,6 +47,19 @@ public class LobbyState {
         return true;
     }
 
+    public List<Player> GetPlayers() {
+        return this.players;
+    }
+
+    public void ReadyUp(String playerId) {
+        Player player = GetPlayerById(playerId);
+        if (player == null) return;
+
+        if (!this.players.contains(player)) return;
+
+        player.setReady(true);
+    }
+
     private void GoToBuyStage() {
         this.gameState = StageState.BUYSTAGE;
         this.stageTimer = this.lobbySettings.getBuyStageTimer();
@@ -45,10 +67,24 @@ public class LobbyState {
 
     private void GoToGameStage() {
         this.gameState = StageState.GAMESTAGE;
+        this.stageTimer = 0; // Currently no timer for the game stage, but if we wanted one we could set it here.
+
+        this.battles = this.battleService.MakeBattles(this.players);
     }
 
     public void AddPlayer(Player player) {
-        this.players.add(player);
+        if (this.players.size() < this.lobbySettings.getMaxPlayers()) {
+            this.players.add(player);
+        }
+    }
+
+    private void CheckAllReady() {
+        if (this.gameState == StageState.BUYSTAGE) {
+            for (Player player : this.players) {
+                if (!player.isReady()) return;
+            }
+            GoToGameStage();
+        }
     }
 
     // Called 30 times per second
@@ -56,6 +92,8 @@ public class LobbyState {
         double timeSinceLastFrame = nanosSinceLastFrame/1_000_000_000.0;
         // If we are in the GameStage or BuyStage then we subtract the timer.
         if (this.gameState != StageState.LOBBY) this.stageTimer -= timeSinceLastFrame; // Subtract the amount of time since the last frame
+
+        CheckAllReady();
 
         System.out.println(this.stageTimer);
     }

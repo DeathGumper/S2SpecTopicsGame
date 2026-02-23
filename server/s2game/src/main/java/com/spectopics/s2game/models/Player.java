@@ -9,6 +9,7 @@ public class Player {
     private String name;
     private String id;
     private Creature[] creatures;
+    private boolean ready;
 
     public Player(String name) {
         this.name = name;
@@ -25,5 +26,13 @@ public class Player {
         }
 
         return false;
+    }
+
+    public void setReady(boolean ready) {
+        this.ready = ready;
+    }
+
+    public boolean isReady() {
+        return this.ready;
     }
 }

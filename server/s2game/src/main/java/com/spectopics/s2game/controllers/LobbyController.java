@@ -52,23 +52,4 @@ public class LobbyController {
         System.out.println("Created Lobby State:" + json);
         return ResponseEntity.ok(json);
     }   
-
-    @GetMapping("/startGame/{lobbyId}/{playerId}")
-    public ResponseEntity<?> startGame(@PathVariable String lobbyId, @PathVariable String playerId) {
-        Player player = LobbyState.GetPlayerById(playerId);
-
-        LobbyState lobby = LobbyState.GetLobby(lobbyId);
-        if (lobby == null) {
-            System.err.println("Failed bc no lobby with id: " + lobbyId + " was found");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("no matching id");
-        }
-
-        if (lobby.StartGame(player)) {
-            System.err.println("Game started!");
-            return ResponseEntity.ok("Game Started");
-        }
-
-        System.err.println("Failed bc either already started or player is not the owner.");
-        return ResponseEntity.ok("Lobby either already started or player is not the owner."); 
-    }
 }
