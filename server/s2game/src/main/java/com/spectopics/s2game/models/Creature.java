@@ -20,7 +20,18 @@ public class Creature {
         addTotalSpeed(this.stats.getSpeed());
     }
 
+    public void NextTurn() {
+        /*
+        Updates variables, calls methods, and other things
+         that need to be done at the start of each turn
+        */
 
+        //TODO
+        /*
+        Current list of what to add here:
+            Damage/Heal Over Time
+        */
+    }
 
 
 
