@@ -14,7 +14,7 @@ class Button(Clickable):
     text = None
     rect = None
 
-    def __init__(self, label: str, action: callable, position: tuple=(0, 0), size: tuple=None, color: tuple=DEFAULT_BUTTON_COLOR):
+    def __init__(self, label: str, action: callable, position: tuple=(0, 0), size: tuple=None, color: tuple=DEFAULT_BUTTON_COLOR, asyncAction: bool=False):
         # Text on the button
         self.label = label
         self.color = color
@@ -24,7 +24,7 @@ class Button(Clickable):
 
         self.rect = pygame.Rect(position[0], position[1], size[0], size[1]) # Default button size
 
-        super().__init__(self.rect, action)
+        super().__init__(self.rect, action, asyncAction=asyncAction) # Call the base Clickable constructor with the button's rect and action
 
     def click(self):
         super().click() # Call the base click method to execute the action

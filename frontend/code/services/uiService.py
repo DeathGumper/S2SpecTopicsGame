@@ -8,8 +8,8 @@ class UIService:
         pass
 
     @staticmethod
-    def makeButton(label, action, position=(0, 0), size=None):
-        button = Button(label, action, position, size)
+    def makeButton(label, action, position=(0, 0), size=None, asyncAction=False):
+        button = Button(label, action, position, size, asyncAction=asyncAction)
         return button
     
     @staticmethod

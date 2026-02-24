@@ -24,7 +24,6 @@ class GameManager:
         # Temp of random buttons
         # self.uiService.makeButton("Make creature", lambda: self.spawnCreature("fireslime"), position=(200, 200))
         # self.uiService.makeButton("Make lobby", lambda: self.lobby_controller.createLobby(input("id? "), input("name? ")), position=(400, 300))
-        # self.uiService.makeButton("Join lobby", lambda: self.lobby_controller.joinLobby(input("id? "), input("name? ")), position=(400, 400))
 
     # Temporary
     def spawnCreature(self, creature_type):

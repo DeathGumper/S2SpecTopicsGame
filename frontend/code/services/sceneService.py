@@ -1,4 +1,5 @@
 import pygame
+import asyncio
 from models.scene import Scene
 
 from controllers.lobbyController import lobbyController
@@ -29,6 +30,8 @@ class SceneService:
 
         # Play (this will make the player) and then go to the lobbying menu
         mainMenuSceen.makeActionButton("Play", lambda: self.switchScene("lobbying"), (100, 100))
+
+        mainMenuSceen.makeActionButton("Websocket", lambda: lobbyController.hello(), asyncAction=True, position=(400, 400))
 
     def lobbyingSetup(self):
         # Get the lobbying scene
@@ -74,6 +77,7 @@ class SceneService:
             return
         
         if self.currentScene.hasSetup == False:
+            # Get the scene setup by name string
             setupFunc = getattr(self, newSceneName + "Setup")
             if setupFunc:
                 setupFunc()

@@ -8,6 +8,8 @@ Ex: Joining/Creating a lobby
 
 import pygame
 import urllib.request
+import websockets
+import asyncio
 from dacite import from_dict
 
 from models.lobbyState import LobbyState
@@ -77,5 +79,41 @@ class LobbyController:
         except Exception as e:
             print(str(e))
             return False
-    
+        
+    def establishWebsocket(self):
+        try:
+            with urllib.request.urlopen(SERVER_URL + "/hello") as response:
+                if 200 <= response.code < 300:
+                    print("Websocket established successfully.")
+                    return True
+                return response.code
+        except urllib.error.HTTPError as e:
+            print(f"HTTP Error: Status code {e.code} - {e.reason}")
+            return False
+        except Exception as e:
+            print(str(e))
+            return False
+        
+    async def hello(self):
+        # The URI scheme for WebSockets is ws:// for standard or wss:// for secure connections
+        uri = "ws://localhost:7831/hello" 
+        try:
+            # The async with statement handles connection and cleanup automatically
+            async with websockets.connect(uri) as websocket:
+                print(f"✅ Connected to server at {uri}!")
+
+                # Send a message
+                name = "Hello, Server!"
+                await websocket.send(name)
+                print(f"> Sent: {name}")
+
+                # Receive a response
+                greeting = await websocket.recv()
+                print(f"< Received: {greeting}")
+
+        except ConnectionRefusedError:
+            print("❌ Could not connect to server. Is the server running?")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            
 lobbyController = LobbyController()
