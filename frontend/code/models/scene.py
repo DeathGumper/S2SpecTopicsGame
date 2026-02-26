@@ -25,8 +25,8 @@ class Scene:
         self.inputBoxHandler.handleInputBoxes()
 
     # Button that has an action associated with it ex: navigation between scenes
-    def makeActionButton(self, label: str, action, position: tuple, size: tuple=None, asyncAction: bool=False):
-        self.buttons.append(UIService.makeButton(label, action, position, size, asyncAction=asyncAction))
+    def makeActionButton(self, label: str, action, position: tuple, size: tuple=None):
+        self.buttons.append(UIService.makeButton(label, action, position, size))
     
     def makeInputBox(self, position: tuple, size: tuple, color: tuple=None, defaultText: str=None):
         return self.inputBoxHandler.addNew(position, size, color, defaultText)

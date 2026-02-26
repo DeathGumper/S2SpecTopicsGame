@@ -126,7 +126,7 @@ public class LobbyState {
 
         });
 
-        this.updater.setDaemon(true); // optional: allows JVM to exit if this is the only thread running
+        this.updater.setDaemon(true);
         this.updater.start();
     }
 

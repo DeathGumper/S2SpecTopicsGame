@@ -2,10 +2,9 @@ import pygame
 import asyncio
 class Clickable:
     clickType = "up" # Default is "up"; when the mouse is released. "down" would be when the mouse is pressed down.
-    def __init__(self, rect: pygame.Rect, action: callable, asyncAction: bool=False):
+    def __init__(self, rect: pygame.Rect, action: callable):
         self.rect = rect
         self.action = action
-        self.asyncAction = asyncAction
         self.hover = False
         self.clicked = False
         self.wasClickedOnLastClick = False
@@ -31,7 +30,4 @@ class Clickable:
                     self.click()
 
     def click(self):
-        if (self.asyncAction):
-            asyncio.run(self.action())
-        else:
-            self.action()
+        self.action()

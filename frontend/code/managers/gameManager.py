@@ -29,7 +29,7 @@ class GameManager:
     def spawnCreature(self, creature_type):
         creature = self.game_controller.spawnCreature(creature_type)
 
-    def loop(self):
+    def update(self):
         self.sceneService.update()
 
     def render(self, surface: pygame.Surface):
