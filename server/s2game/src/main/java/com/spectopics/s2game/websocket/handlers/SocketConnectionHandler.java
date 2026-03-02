@@ -3,26 +3,43 @@ package com.spectopics.s2game.websocket.handlers;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import com.spectopics.dto.GameStartedDto;
+import com.spectopics.s2game.dto.ServerMessage;
+import com.spectopics.s2game.dto.clientPayloads.CreateLobbyPayload;
+import com.spectopics.s2game.dto.clientPayloads.JoinLobbyPayload;
+import com.spectopics.s2game.dto.clientPayloads.StartGamePayload;
 import com.spectopics.s2game.models.LobbyState;
+import com.spectopics.s2game.models.Player;
+import com.spectopics.s2game.services.LobbyCommandService;
+import com.spectopics.s2game.services.PlayerService;
 
+import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.ObjectWriter;
+
 
 // Socket-Connection Configuration class
+@Component
 public class SocketConnectionHandler extends TextWebSocketHandler {
-    private ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-
+    private final ObjectMapper objectMapper = new ObjectMapper();
     // In this list all the connections will be stored
     // Then it will be used to broadcast the message
-    List<WebSocketSession> webSocketSessions
-        = Collections.synchronizedList(new ArrayList<>());
+    private final List<WebSocketSession> webSocketSessions = Collections.synchronizedList(new ArrayList<>());
+
+    private LobbyCommandService lobbyCommandService;
+
+    // Constructor Injection
+    public SocketConnectionHandler(LobbyCommandService lobbyCommandService) {
+        this.lobbyCommandService = lobbyCommandService;
+
+        System.out.println("SocketConnectionHandler initialized with LobbyCommandService");
+        System.out.println("LobbyCommandService instance: " + lobbyCommandService);
+    }
 
     // This method is executed when client tries to connect
     // to the sockets
@@ -38,8 +55,8 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
 
         // Adding the session into the list
         webSocketSessions.add(session);
-
-        session.sendMessage(new TextMessage("YO gangalang"));
+        
+        broadcastToIndividual(session, "WEBSOCKET_CONNECTED", "Successfully connected to WebSocket server");
     }
 
     // When client disconnect from WebSocket then this
@@ -53,33 +70,76 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
 
         // Removing the connection info from the list
         webSocketSessions.remove(session);
+        
+        // Remove the session from the player that disconnected
+        Player playerDisconnected = PlayerService.GetPlayerBySession(session);
+        if (playerDisconnected == null) return;
+        PlayerService.RemovePlayer(playerDisconnected);
     }
 
-    // It will handle exchanging of message in the network
-    // It will have a session info who is sending the
-    // message Also the Message object passes as parameter
     @Override
-    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception
-    {
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 
-        super.handleMessage(session, message);
+        JsonNode root = objectMapper.readTree(message.getPayload());
 
-        System.out.println("Message Received: " + message.getPayload() + " from " + session.getId());
+        String type = root.get("type").asString();
+        JsonNode payloadNode = root.get("payload");
 
-        // Iterate through the list and pass the message to
-        // all the sessions Ignore the session in the list
-        // which wants to send the message.
-        for (WebSocketSession webSocketSession :
-             webSocketSessions) {
-            if (session == webSocketSession)
-                continue;
+        // Route normally
+        switch (type) {
+            case "CREATE_LOBBY":
+                lobbyCommandService.handleCreateLobby(
+                    objectMapper.treeToValue(payloadNode, CreateLobbyPayload.class), 
+                    session
+                );
+                break;
+
+            case "JOIN_LOBBY":
+                lobbyCommandService.handleJoinLobby(
+                    objectMapper.treeToValue(payloadNode, JoinLobbyPayload.class), 
+                    session
+                );
+                break;
+
+            case "START_GAME":
+                lobbyCommandService.handleStartGame(
+                    objectMapper.treeToValue(payloadNode, StartGamePayload.class), 
+                    session
+                );
+                break;
         }
     }
 
-    public void GameStarted(LobbyState lobbyState) throws Exception {
-        for (WebSocketSession webSocketSession :
-             webSocketSessions) {
-            webSocketSession.sendMessage(new TextMessage(ow.writeValueAsString(new GameStartedDto(lobbyState))));
+    public void broadcastToLobby(LobbyState lobby, String type, Object payload) throws Exception {
+
+        List<WebSocketSession> sessions = new ArrayList<WebSocketSession>();
+        // Get all sessions in the lobby
+        for (var player : lobby.getPlayers()) {
+            sessions.add(player.getSession());
+        }
+
+        if (sessions == null || sessions.size() == 0) return;
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        ServerMessage message = new ServerMessage(type, payload);
+        String json = mapper.writeValueAsString(message);
+
+        for (WebSocketSession session : sessions) {
+            if (session.isOpen()) {
+                session.sendMessage(new TextMessage(json));
+            }
+        }
+    }
+
+    public void broadcastToIndividual(WebSocketSession session, String type, Object payload) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
+        ServerMessage message = new ServerMessage(type, payload);
+        String json = mapper.writeValueAsString(message);
+
+        if (session.isOpen()) {
+            session.sendMessage(new TextMessage(json));
         }
     }
 }

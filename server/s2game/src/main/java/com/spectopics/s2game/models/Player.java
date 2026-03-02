@@ -1,6 +1,8 @@
 package com.spectopics.s2game.models;
 
-import java.util.UUID;
+import org.springframework.web.socket.WebSocketSession;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 
@@ -10,10 +12,14 @@ public class Player {
     private String id;
     private Creature[] creatures;
     private boolean ready;
+    private boolean owner = false;
+    @JsonIgnore
+    private WebSocketSession session;
 
-    public Player(String name) {
+    public Player(String name, WebSocketSession session) {
         this.name = name;
-        this.id = UUID.randomUUID().toString();
+        this.id = session.getId();
+        this.session = session;
         this.creatures = new Creature[5];
     }
 

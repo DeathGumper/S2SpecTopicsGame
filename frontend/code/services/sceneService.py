@@ -15,11 +15,11 @@ class SceneService:
         lobbyingScene = Scene("lobbying") # Choosing wether to join or create a lobby
         buyStageScene = Scene("buystage") # Buying new creatures and gear
         lobbyScene = Scene("lobby") # Scene showing all players in lobby and settings for lobby if you created it
-        gameScene = Scene("game") # Battling opponent
+        battleStageScene = Scene("battlestage") # Battling opponent
         endScene = Scene("end") # End of battle results
 
         # Scene storage
-        self.scenes.extend([mainMenuScene, lobbyingScene, lobbyScene, buyStageScene, gameScene, endScene])
+        self.scenes.extend([mainMenuScene, lobbyingScene, lobbyScene, buyStageScene, battleStageScene, endScene])
 
         # Default starting scene
         self.switchScene("mainmenu")
@@ -44,17 +44,17 @@ class SceneService:
         idInput = lobbyingScene.makeInputBox((400, 200), (100, 40), defaultText="Id?")
         
         # Join Lobby and then go to lobby scene if successful
-        lobbyingScene.makeActionButton("Join", lambda: lobbyController.joinLobby(nameInput.inputText, idInput.inputText) and self.switchScene("lobby"), (100, 100))
+        lobbyingScene.makeActionButton("Join", lambda: asyncio.create_task(lobbyController.joinLobby(nameInput.inputText, idInput.inputText)), (100, 100))
 
         # Create Lobby and then go to lobby scene if successful
-        lobbyingScene.makeActionButton("Create", lambda: lobbyController.createLobby(nameInput.inputText, idInput.inputText) and self.switchScene("lobby"), (100, 200))
+        lobbyingScene.makeActionButton("Create", lambda: asyncio.create_task(lobbyController.createLobby(nameInput.inputText, idInput.inputText)), (100, 200))
 
     def lobbySetup(self):
         # Get the lobby scene
         lobbyScene = self.getSceneByName("lobby")
 
         # Start Game and then go to buy stage
-        lobbyScene.makeActionButton("Start Game!", lambda: gameController.readyUp(), (100, 100))
+        lobbyScene.makeActionButton("Start Game!", lambda: asyncio.create_task(gameController.startGame()), (100, 100))
 
     def buystageSetup(self):
         pass

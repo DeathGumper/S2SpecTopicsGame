@@ -7,27 +7,20 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 
 import com.spectopics.s2game.websocket.handlers.SocketConnectionHandler;
 
-// web socket connections is handled 
-// by this class
 @Configuration
 @EnableWebSocket
-public class WebSocketConfig
-    implements WebSocketConfigurer {
+public class WebSocketConfig implements WebSocketConfigurer {
 
-    // Overriding a method which register the socket
-    // handlers into a Registry
-    @Override
-    public void registerWebSocketHandlers(
-        WebSocketHandlerRegistry webSocketHandlerRegistry)
-    {
-        // For adding a Handler we give the Handler class we
-        // created before with End point Also we are managing
-        // the CORS policy for the handlers so that other
-        // domains can also access the socket
-        webSocketHandlerRegistry
-            .addHandler(new SocketConnectionHandler(),"/hello")
-            .setAllowedOrigins("*");
+    private final SocketConnectionHandler socketConnectionHandler;
+
+    public WebSocketConfig(SocketConnectionHandler socketConnectionHandler) {
+        this.socketConnectionHandler = socketConnectionHandler;
     }
 
-    
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry
+            .addHandler(socketConnectionHandler, "/websocket")
+            .setAllowedOrigins("*");
+    }
 }

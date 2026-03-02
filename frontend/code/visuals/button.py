@@ -14,7 +14,7 @@ class Button(Clickable):
     text = None
     rect = None
 
-    def __init__(self, label: str, action: callable, position: tuple=(0, 0), size: tuple=None, color: tuple=DEFAULT_BUTTON_COLOR, asyncAction: bool=False):
+    def __init__(self, label: str, action: callable, position: tuple=(0, 0), size: tuple=None, color: tuple=DEFAULT_BUTTON_COLOR):
         # Text on the button
         self.label = label
         self.color = color

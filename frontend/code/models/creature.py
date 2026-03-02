@@ -1,7 +1,9 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
 
-@dataclass
-class Creature:
+from models.stats import Stats
+
+
+class Creature(BaseModel):
     name: str
-    stats: object
+    stats: Stats
     totalSpeed: float

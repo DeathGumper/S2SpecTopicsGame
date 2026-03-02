@@ -6,75 +6,37 @@ Controller for communicating with the server regarding game actions.
 Ex: Player attack enemy creature.
 """
 import pygame
-import websockets
-import asyncio
 
 import urllib.request
+from dto.clientMessage import ClientMessage
+from dto.clientPayloads.StartGamePayload import StartGamePayload
 from models.creature import Creature
 from utils.CONSTANTS import SERVER_URL
 from controllers.lobbyController import lobbyController
+from controllers.websocketConnection import websocketConnection
+from models.currentLobbyStateHandler import CurrentLobbyStateHandler
+
 import json
 
 class GameController:
-    def __init__(self):
-        self.websocket = None
-        self.recvTask = None
-        self.latestUpdate = None
-    
-    async def listenForUpdates(self, websocket):
-        async for message in websocket:
-            print(f"\n[Update from Server]: {message}")
         
-    async def connectWebsocket(self):
-        # The URI scheme for WebSockets is ws:// for standard or wss:// for secure connections
-        uri = "ws://localhost:7831/hello"
-        try:
-            # The async with statement handles connection and cleanup automatically
-            self.websocket = await websockets.connect(uri)
-            self.recvTask = asyncio.create_task(self.websocket.recv())
+    async def startGame(self):
+        await websocketConnection.sendMessage(ClientMessage(type="START_GAME", payload=StartGamePayload(CurrentLobbyStateHandler.lobbyState.id)))
 
-            print("✅ Connected to server websocket for game updates.")
-
-        except ConnectionRefusedError:
-            print("❌ Could not connect to server. Is the server running?")
-        except Exception as e:
-            print(f"An error occurred: {e}")
-
-    async def sayHi(self):
-        if self.websocket:
-            await self.websocket.send("Hi from the client!")
-
-    async def update(self):
-        if not self.recvTask:
-            print("Websocket not connected. Call connectWebsocket() first.")
-            return
-
-        # ONLY continue if message is ready
-        if not self.recvTask.done():
-            return
-
-        # If the task finished, check if it errored
-        if self.recvTask.exception():
-            print("❌ Recv error:", self.recvTask.exception())
-            return
-
-
-        try:
-            message = self.recvTask.result()
-            print(f"\n[Update from Server]: {message}")
-            self.latestUpdate = message
-            # Start listening again
-            self.recvTask = asyncio.create_task(self.websocket.recv())
-
-        except websockets.ConnectionClosed:
-            print("⚠️ WebSocket closed.")
-            return
-
-        except Exception as e:
-            print("Unexpected error:", e)
-            return
-
-            
-    
 gameController = GameController()
         
+
+         
+        # try:
+        #     with urllib.request.urlopen(SERVER_URL + "/lobby/startGame/" + lobbyController.lobbyState.id + "/" + lobbyController.player.id) as response:
+        #         if 200 <= response.code < 300:
+        #             responseLoaded = json.loads(response.read().decode('utf-8'))
+        #             print(responseLoaded)
+        #             return responseLoaded
+        #         return response.code
+        # except urllib.error.HTTPError as e:
+        #     print(f"HTTP Error: Status code {e.code} - {e.reason}")
+        #     return False
+        # except Exception as e:
+        #     print(str(e))
+        #     return False

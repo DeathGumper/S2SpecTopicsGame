@@ -13,6 +13,7 @@ import pygame
 import pygame.time
 import random
 
+from controllers.websocketConnection import websocketConnection
 from controllers.gameController import gameController
 from controllers.lobbyController import lobbyController
 from managers.gameManager import GameManager
@@ -47,12 +48,12 @@ async def main():
     # Clock
     clock = pygame.time.Clock()
 
-    await gameController.connectWebsocket() # Connect to the server websocket to listen for game updates
+    await websocketConnection.connectWebsocket() # Connect to the server websocket to listen for game updates
     
     while True:
         window.fill(bgColor) # Clear the window with a background
 
-        await gameController.update() # Check for updates from the server
+        await websocketConnection.update() # Check for updates from the server
 
         # Event handling
         for event in pygame.event.get():
@@ -65,8 +66,6 @@ async def main():
                 # Send the key pressed info to the inputboxservice (Temporary)
                 """ I DO NOT LIKE THIS SOLUTION, this is the only solution to the problem i can figure out, i need to try to understand it more """
                 gameManager.sceneService.currentScene.inputBoxHandler.keyPressed(event.key)
-                if event.key == pygame.K_p:
-                    await gameController.sayHi()
                 if event.key == pygame.K_F11:
                     window = toggleFullscreen(window)
                 if event.key == pygame.K_EQUALS:
@@ -75,8 +74,6 @@ async def main():
                     # Escape key = Quit pygame
                     pygame.quit()
                     return
-
-        print(gameController.latestUpdate)
                 
         # Loops
         gameManager.update()

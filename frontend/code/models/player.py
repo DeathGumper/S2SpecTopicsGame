@@ -1,8 +1,11 @@
-from dataclasses import dataclass
+
+from pydantic import BaseModel
+from typing import Optional
 from models.creature import Creature
 
-@dataclass
-class Player:
+class Player(BaseModel):
     name: str
     id: str #UUID from backend
-    creatures: list
+    creatures: list[Optional[Creature]]
+    ready: bool
+    owner: bool

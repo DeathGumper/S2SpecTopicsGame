@@ -1,6 +1,6 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
 
-@dataclass
-class LobbySettings:
+class LobbySettings(BaseModel):
     buyStageTimer: float
     turnTimer: float
+    maxPlayers: int
