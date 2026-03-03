@@ -2,10 +2,10 @@ package com.spectopics.s2game.websocket.listenerTransferObjects;
 
 import com.spectopics.s2game.models.LobbyState;
 
-public class GameStartedEvent {
+public class ResultsStageStartedEvent {
     public LobbyState lobby;
 
-    public GameStartedEvent(LobbyState lobby) {
-        this.lobby = lobby;
+    public ResultsStageStartedEvent(LobbyState lobbyState) {
+        this.lobby = lobbyState;
     }
 }

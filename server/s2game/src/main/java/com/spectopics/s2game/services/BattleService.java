@@ -37,4 +37,15 @@ public class BattleService {
         }
         return true;
     }
+
+    public static Battle getBattleByPlayerId(List<Battle> battles, String playerId) {
+        for (Battle battle : battles) {
+            // Check if either the player 1 or player 2's id = player id
+            if (battle.getPlayer1().getId().equals(playerId) || battle.getPlayer2().getId().equals(playerId)) {
+                return battle;
+            }
+        }
+
+        return null;
+    }
 }

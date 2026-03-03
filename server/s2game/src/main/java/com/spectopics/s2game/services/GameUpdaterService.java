@@ -2,10 +2,17 @@ package com.spectopics.s2game.services;
 
 import com.spectopics.s2game.enums.StageState;
 import com.spectopics.s2game.models.LobbyState;
+import com.spectopics.s2game.models.Player;
 
 public class GameUpdaterService {
     private Thread updater;
     private LobbyState lobbyState;
+
+    private GameEventService gameEventService;
+
+    public GameUpdaterService() {
+        gameEventService = SpringContext.getBean(GameEventService.class);
+    }
 
     // Called 30 times per second
     private void Update(long nanosSinceLastFrame) {
@@ -16,14 +23,40 @@ public class GameUpdaterService {
         //     LobbyService.KillLobby(lobbyState);
         // }
 
-        // If we are in the GameStage or BuyStage then we subtract the timer.
+        // If we are in the GameStage or BuyStage or ResultsStage then we subtract the timer.
         if (this.lobbyState.getStage() != StageState.LOBBY) {
             this.lobbyState.setStageTimer((float) (this.lobbyState.getStageTimer() - timeSinceLastFrame)); // Subtract the amount of time since the last frame
-            if (LobbyStageService.CheckAllReady(this.lobbyState, this.lobbyState.getPlayers())) {
-                System.out.println("All players ready, starting battle stage!");
-                BattleService.MakeBattles(this.lobbyState);
+            
+        }
 
-                
+        if (this.lobbyState.getStage() == StageState.BUYSTAGE) {
+            boolean allReady = true;
+            // iterate thru all players, if any player is not ready then return
+            for (Player player : lobbyState.getPlayers()) {
+                if (!player.isReady()) allReady = false;
+            }
+
+            // Success, all players are ready, start the battle stage
+            if (allReady || this.lobbyState.getStageTimer() <= 0) {
+                System.out.println("All players ready, starting battle stage!");
+                LobbyStageService.GoToBattleStage(this.lobbyState);
+                this.lobbyState.setBattles(BattleService.MakeBattles(this.lobbyState));
+                try {
+                    gameEventService.battlesStarted(this.lobbyState);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (this.lobbyState.getStage() == StageState.RESULTSSTAGE) {
+            if (this.lobbyState.getStageTimer() <= 0) {
+                LobbyStageService.GoToBuyStage(this.lobbyState);
+                try {
+                    gameEventService.buyStageStarted(lobbyState);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 

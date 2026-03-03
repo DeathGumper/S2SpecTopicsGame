@@ -34,20 +34,21 @@ class GameManager:
         if (lobbyState == None):
             return
         
-        print(lobbyState.stage)
-        
         if (lobbyState.stage == "LOBBY"):
             if (self.sceneService.currentScene.name != "lobby"):
                 self.sceneService.switchScene("lobby")
         
         if (lobbyState.stage == "BUYSTAGE"):
-            print("buy stage time")
             if (self.sceneService.currentScene.name != "buystage"):
                 self.sceneService.switchScene("buystage")
         
         if (lobbyState.stage == "BATTLESTAGE"):
             if (self.sceneService.currentScene.name != "battlestage"):
                 self.sceneService.switchScene("battlestage")
+
+        if (lobbyState.stage == "RESULTSSTAGE"):
+            if (self.sceneService.currentScene.name != "resultsstage"):
+                self.sceneService.switchScene("resultsstage")
 
     def render(self, surface: pygame.Surface):
         self.sceneService.render(surface)

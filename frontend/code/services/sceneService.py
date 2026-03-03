@@ -13,13 +13,13 @@ class SceneService:
         # Scene declarations
         mainMenuScene = Scene("mainmenu") # Main menu
         lobbyingScene = Scene("lobbying") # Choosing wether to join or create a lobby
-        buyStageScene = Scene("buystage") # Buying new creatures and gear
         lobbyScene = Scene("lobby") # Scene showing all players in lobby and settings for lobby if you created it
+        buyStageScene = Scene("buystage") # Buying new creatures and gear
         battleStageScene = Scene("battlestage") # Battling opponent
-        endScene = Scene("end") # End of battle results
+        resultsStageScene = Scene("resultsstage") # End of battle results
 
         # Scene storage
-        self.scenes.extend([mainMenuScene, lobbyingScene, lobbyScene, buyStageScene, battleStageScene, endScene])
+        self.scenes.extend([mainMenuScene, lobbyingScene, lobbyScene, buyStageScene, battleStageScene, resultsStageScene])
 
         # Default starting scene
         self.switchScene("mainmenu")
@@ -57,7 +57,25 @@ class SceneService:
         lobbyScene.makeActionButton("Start Game!", lambda: asyncio.create_task(gameController.startGame()), (100, 100))
 
     def buystageSetup(self):
-        pass
+        buystageScene = self.getSceneByName("buystage")
+
+        # temporary
+        # Make a button that displays its the buystage
+        buystageScene.makeActionButton("Buy Stage!", lambda: print("You happen to be in the buy stage rn"), (10, 10))
+
+        buystageScene.makeActionButton("Ready Up!", lambda: asyncio.create_task(gameController.readyUp()), (100, 100))
+
+    def battlestageSetup(self):
+        battlestageScene = self.getSceneByName("battlestage")
+
+        battlestageScene.makeActionButton("Battle Stage!", lambda: print("You happen to be in the battle stage rn"), (10, 10))
+
+        battlestageScene.makeActionButton("End Battles!", lambda: asyncio.create_task(gameController.endBattleStage()), (100, 400))
+
+    def resultsstageSetup(self):
+        resultsstageScene = self.getSceneByName("resultsstage")
+
+        resultsstageScene.makeActionButton("Results Stage!", lambda: print("You happen to be in the results stage rn"), (10, 10))
 
     # Get scene by name (name is lowercase scene name without "scene" ex: BuyStageScene -> "buystage")
     def getSceneByName(self, name: str) -> Scene:

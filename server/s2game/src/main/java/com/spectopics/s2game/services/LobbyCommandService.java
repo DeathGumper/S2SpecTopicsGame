@@ -5,6 +5,7 @@ import org.springframework.web.socket.WebSocketSession;
 
 import com.spectopics.s2game.dto.clientPayloads.CreateLobbyPayload;
 import com.spectopics.s2game.dto.clientPayloads.JoinLobbyPayload;
+import com.spectopics.s2game.dto.clientPayloads.ReadyUpPayload;
 import com.spectopics.s2game.dto.clientPayloads.StartGamePayload;
 import com.spectopics.s2game.models.LobbyState;
 import com.spectopics.s2game.models.Player;
@@ -47,9 +48,21 @@ public class LobbyCommandService {
     }
 
     public void handleStartGame(StartGamePayload payload, WebSocketSession session) throws Exception {
-        System.out.println("Attempting to start game.");
-        
         if (LobbyStageService.StartGame(LobbyService.GetLobby(payload.lobbyId), PlayerService.GetPlayerBySession(session)))
-            gameEventService.gameStarted(LobbyService.GetLobby(payload.lobbyId));   
+            gameEventService.buyStageStarted(LobbyService.GetLobby(payload.lobbyId));   
+    }
+
+    public void handleReadyUp(ReadyUpPayload payload, WebSocketSession session) throws Exception {
+        Player player = PlayerService.GetPlayerBySession(session);
+        System.out.println("Player: " + player.getName() + " is ready!");
+        player.setReady(true);
+    }
+
+    public void handleBattleEnd(String lobbyId, WebSocketSession session) throws Exception {
+        LobbyState lobby = LobbyService.GetLobby(lobbyId);
+
+        if (LobbyStageService.EndBattleStage(lobby)) {
+            gameEventService.resultsStageStarted(lobby);
+        }
     }
 }

@@ -12,6 +12,7 @@ class LobbyStage(str, Enum):
     LOBBY = "LOBBY"
     BUYSTAGE = "BUYSTAGE"
     BATTLESTAGE = "BATTLESTAGE"
+    RESULTSSTAGE = "RESULTSSTAGE"
 
 class LobbyState(BaseModel):
     name: str

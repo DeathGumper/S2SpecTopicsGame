@@ -6,9 +6,14 @@ import json
 from dto.clientMessage import ClientMessage
 from dto.serverMessage import ServerMessage
 from dto.serverPayloads.LobbyJoinedPayload import LobbyJoinedPayload
+from dto.serverPayloads.BuyStageStartedPayload import BuyStageStartedPayload
+from dto.serverPayloads.BattlesStartedPayload import BattlesStartedPayload
+from dto.serverPayloads.ResultsStageStartedPayload import ResultsStageStartedPayload
 from models.lobbyState import LobbyState
 from dataclasses import asdict
 from models.currentLobbyStateHandler import CurrentLobbyStateHandler
+from models.currentBattleStateHandler import CurrentBattleStateHandle
+from services.BattleService import BattleService
 
 class WebsocketConnection:
     def __init__(self):
@@ -74,9 +79,25 @@ class WebsocketConnection:
 
                 CurrentLobbyStateHandler.lobbyState = lobbyState
 
-            elif (serverMessage.type == "GAME_STARTED"):
+            elif (serverMessage.type == "BUYSTAGE_STARTED"):
                 """Here the only thing in the payload is the lobbyState"""
-                CurrentLobbyStateHandler.lobbyState = LobbyState.model_validate(serverMessage.payload)
+                payload = BuyStageStartedPayload.model_validate(serverMessage.payload)
+                CurrentLobbyStateHandler.lobbyState = LobbyState.model_validate(payload.lobbyState)
+
+            elif (serverMessage.type == "BATTLES_STARTED"):
+                """The payload will have the lobbyState and the battle this client is in"""
+                payload = BattlesStartedPayload.model_validate(serverMessage.payload)
+                print(payload)
+                CurrentLobbyStateHandler.lobbyState = LobbyState.model_validate(payload.lobbyState)
+                CurrentBattleStateHandle.battle = BattleService.getBattleById(CurrentLobbyStateHandler.lobbyState.battles, payload.battleId)
+
+            elif (serverMessage.type == "RESULTSSTAGE_STARTED"):
+                """This just has the lobbyState"""
+                payload = ResultsStageStartedPayload.model_validate(serverMessage.payload)
+                CurrentLobbyStateHandler.lobbyState = LobbyState.model_validate(payload.lobbyState)
+
+            else:
+                print("Type " + serverMessage.type + " was not recognized.")
 
             self.latestUpdate = message
 

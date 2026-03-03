@@ -13,6 +13,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import com.spectopics.s2game.dto.ServerMessage;
 import com.spectopics.s2game.dto.clientPayloads.CreateLobbyPayload;
 import com.spectopics.s2game.dto.clientPayloads.JoinLobbyPayload;
+import com.spectopics.s2game.dto.clientPayloads.ReadyUpPayload;
 import com.spectopics.s2game.dto.clientPayloads.StartGamePayload;
 import com.spectopics.s2game.models.LobbyState;
 import com.spectopics.s2game.models.Player;
@@ -104,6 +105,23 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
             case "START_GAME":
                 lobbyCommandService.handleStartGame(
                     objectMapper.treeToValue(payloadNode, StartGamePayload.class), 
+                    session
+                );
+                break;
+
+            case "READY_UP":
+                lobbyCommandService.handleReadyUp(
+                    objectMapper.treeToValue(payloadNode, ReadyUpPayload.class), 
+                    session
+                );
+                break;
+
+            // Temporary
+            case "END_BATTLES":
+                System.out.println("Battle stage is ending!");
+                // Ends all battles in that lobbyState
+                lobbyCommandService.handleBattleEnd(
+                    objectMapper.treeToValue(payloadNode, String.class),
                     session
                 );
                 break;

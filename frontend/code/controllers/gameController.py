@@ -10,6 +10,7 @@ import pygame
 import urllib.request
 from dto.clientMessage import ClientMessage
 from dto.clientPayloads.StartGamePayload import StartGamePayload
+from dto.clientPayloads.ReadyUpPayload import ReadyUpPayload
 from models.creature import Creature
 from utils.CONSTANTS import SERVER_URL
 from controllers.lobbyController import lobbyController
@@ -22,6 +23,13 @@ class GameController:
         
     async def startGame(self):
         await websocketConnection.sendMessage(ClientMessage(type="START_GAME", payload=StartGamePayload(CurrentLobbyStateHandler.lobbyState.id)))
+
+    async def readyUp(self):
+        print("Ready up called")
+        await websocketConnection.sendMessage(ClientMessage(type="READY_UP", payload=ReadyUpPayload(CurrentLobbyStateHandler.lobbyState.id)))
+
+    async def endBattleStage(self):
+        await websocketConnection.sendMessage(ClientMessage(type="END_BATTLES", payload=CurrentLobbyStateHandler.lobbyState.id))
 
 gameController = GameController()
         
