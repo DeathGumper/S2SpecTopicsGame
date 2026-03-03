@@ -6,23 +6,45 @@ Controller for communicating with the server regarding game actions.
 Ex: Player attack enemy creature.
 """
 import pygame
+
 import urllib.request
+from dto.clientMessage import ClientMessage
+from dto.clientPayloads.StartGamePayload import StartGamePayload
+from dto.clientPayloads.ReadyUpPayload import ReadyUpPayload
 from models.creature import Creature
 from utils.CONSTANTS import SERVER_URL
 from controllers.lobbyController import lobbyController
+from controllers.websocketConnection import websocketConnection
+from models.currentLobbyStateHandler import CurrentLobbyStateHandler
+
 import json
 
 class GameController:
-    def __init__(self):
-        pass
+        
+    async def startGame(self):
+        await websocketConnection.sendMessage(ClientMessage(type="START_GAME", payload=StartGamePayload(CurrentLobbyStateHandler.lobbyState.id)))
 
-    def spawnCreature(self, creature_type):
-        contents = urllib.request.urlopen(SERVER_URL + "/creature/spawn/" + creature_type + "/" + lobbyController.player.name).read()
+    async def readyUp(self):
+        print("Ready up called")
+        await websocketConnection.sendMessage(ClientMessage(type="READY_UP", payload=ReadyUpPayload(CurrentLobbyStateHandler.lobbyState.id)))
 
-        # Convert the contents to an Creature class and return it
-        creature_data = json.loads(contents.decode('utf-8'))
-        print("Spawned Creature Data:", creature_data)
-        return Creature(creature_data['name'], creature_data['stats'])
-    
+    async def endBattleStage(self):
+        await websocketConnection.sendMessage(ClientMessage(type="END_BATTLES", payload=CurrentLobbyStateHandler.lobbyState.id))
+
 gameController = GameController()
         
+
+         
+        # try:
+        #     with urllib.request.urlopen(SERVER_URL + "/lobby/startGame/" + lobbyController.lobbyState.id + "/" + lobbyController.player.id) as response:
+        #         if 200 <= response.code < 300:
+        #             responseLoaded = json.loads(response.read().decode('utf-8'))
+        #             print(responseLoaded)
+        #             return responseLoaded
+        #         return response.code
+        # except urllib.error.HTTPError as e:
+        #     print(f"HTTP Error: Status code {e.code} - {e.reason}")
+        #     return False
+        # except Exception as e:
+        #     print(str(e))
+        #     return False

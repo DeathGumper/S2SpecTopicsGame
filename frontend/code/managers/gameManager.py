@@ -8,6 +8,7 @@ Ex: Calling Service due to server saying enemy creature attacked.
 import pygame
 from controllers.gameController import gameController
 from controllers.lobbyController import lobbyController
+from models.currentLobbyStateHandler import CurrentLobbyStateHandler
 from services.sceneService import SceneService
 
 
@@ -24,14 +25,30 @@ class GameManager:
         # Temp of random buttons
         # self.uiService.makeButton("Make creature", lambda: self.spawnCreature("fireslime"), position=(200, 200))
         # self.uiService.makeButton("Make lobby", lambda: self.lobby_controller.createLobby(input("id? "), input("name? ")), position=(400, 300))
-        # self.uiService.makeButton("Join lobby", lambda: self.lobby_controller.joinLobby(input("id? "), input("name? ")), position=(400, 400))
 
-    # Temporary
-    def spawnCreature(self, creature_type):
-        creature = self.game_controller.spawnCreature(creature_type)
-
-    def loop(self):
+    def update(self):
         self.sceneService.update()
+
+        lobbyState = CurrentLobbyStateHandler.lobbyState    
+            
+        if (lobbyState == None):
+            return
+        
+        if (lobbyState.stage == "LOBBY"):
+            if (self.sceneService.currentScene.name != "lobby"):
+                self.sceneService.switchScene("lobby")
+        
+        if (lobbyState.stage == "BUYSTAGE"):
+            if (self.sceneService.currentScene.name != "buystage"):
+                self.sceneService.switchScene("buystage")
+        
+        if (lobbyState.stage == "BATTLESTAGE"):
+            if (self.sceneService.currentScene.name != "battlestage"):
+                self.sceneService.switchScene("battlestage")
+
+        if (lobbyState.stage == "RESULTSSTAGE"):
+            if (self.sceneService.currentScene.name != "resultsstage"):
+                self.sceneService.switchScene("resultsstage")
 
     def render(self, surface: pygame.Surface):
         self.sceneService.render(surface)
