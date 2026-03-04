@@ -1,6 +1,4 @@
-package main.java.com.spectopics.s2game.models;
-
-import com.spectopics.s2game.models.Creature;
+package com.spectopics.s2game.models;
 
 public class Action {
     int startTurn = -1;
@@ -15,7 +13,7 @@ public class Action {
 
     public void DamageOverTime(Creature other, int damage) {
         if (currentTurn >= endTurn) {
-            other.GetStats().AdjustHealth(-1 * (damage / (endTurn - startTurn)));
+            other.getStats().AdjustHealth(-1 * (damage / (endTurn - startTurn)));
         }
     }
 
@@ -27,7 +25,7 @@ public class Action {
 
     public void HealOverTime(Creature other, int damage) {
         if (currentTurn >= endTurn) {
-            other.GetStats().AdjustHealth((damage / (endTurn - startTurn)));
+            other.getStats().AdjustHealth((damage / (endTurn - startTurn)));
         }
     }
 

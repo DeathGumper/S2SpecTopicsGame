@@ -68,7 +68,7 @@ public class Stats {
             strength += str;
             return true;
         } else {
-            strength = Math.Max(0, strength + str);
+            strength = Math.max(0, strength + str);
             return false;
         }
     }
@@ -97,7 +97,7 @@ public class Stats {
             defense += def;
             return true;
         } else {
-            defense = Math.Max(0, defense + def);
+            defense = Math.max(0, defense + def);
             return false;
         }
     }
@@ -126,7 +126,7 @@ public class Stats {
             dexterity += dex;
             return true;
         } else {
-            dexterity = Math.Max(0, dexterity + dex);
+            dexterity = Math.max(0, dexterity + dex);
             return false;
         }
     }
@@ -155,7 +155,7 @@ public class Stats {
             speed += spd;
             return true;
         } else {
-            speed = Math.Max(0, speed + spd);
+            speed = Math.max(0, speed + spd);
             return false;
         }
     }
@@ -184,7 +184,7 @@ public class Stats {
             accuracy += acc;
             return true;
         } else {
-            accuracy = Math.Max(0, accuracy + acc);
+            accuracy = Math.max(0, accuracy + acc);
             return false;
         }
     }
