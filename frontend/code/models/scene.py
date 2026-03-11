@@ -8,14 +8,15 @@ class Scene:
     name = "scene"
     buttons = None
     inputBoxHandler = None
-    objects = None
+    gameObjects = None
     hasSetup = False
 
     def __init__(self, name: str):
         self.name = name
+        self.textBoxes = []
         self.buttons = []
         self.inputBoxHandler = InputBoxService()
-        self.objects = []
+        self.gameObjects = []
         pass
     
     def checkInput(self):
@@ -23,6 +24,9 @@ class Scene:
             button.checkClick()
 
         self.inputBoxHandler.handleInputBoxes()
+
+    def getObjectByName(self):
+        pass
 
     # Button that has an action associated with it ex: navigation between scenes
     def makeActionButton(self, label: str, action, position: tuple, size: tuple=None):
