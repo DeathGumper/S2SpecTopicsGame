@@ -121,7 +121,7 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
                 lobbyCommandService.handleActionCalled(
                     objectMapper.treeToValue(payloadNode, ActionPayload.class), 
                     session
-                )
+                );
 
             // Temporary
             case "END_BATTLES":
