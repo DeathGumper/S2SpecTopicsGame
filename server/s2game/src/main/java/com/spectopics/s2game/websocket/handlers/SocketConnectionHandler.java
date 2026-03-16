@@ -11,6 +11,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.spectopics.s2game.dto.ServerMessage;
+import com.spectopics.s2game.dto.clientPayloads.ActionPayload;
 import com.spectopics.s2game.dto.clientPayloads.CreateLobbyPayload;
 import com.spectopics.s2game.dto.clientPayloads.JoinLobbyPayload;
 import com.spectopics.s2game.dto.clientPayloads.ReadyUpPayload;
@@ -115,6 +116,12 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
                     session
                 );
                 break;
+            
+            case "ACTION":
+                lobbyCommandService.handleActionCalled(
+                    objectMapper.treeToValue(payloadNode, ActionPayload.class), 
+                    session
+                )
 
             // Temporary
             case "END_BATTLES":
