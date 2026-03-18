@@ -37,6 +37,7 @@ class WebsocketConnection:
             print(f"❌ Failed to send message: {e}")
 
     async def connectWebsocket(self):
+        #uri = "ws://localhost:8080/websocket" 
         uri = "wss://s2spectopicsserver-dtg3dac0h6d8b8hf.eastus-01.azurewebsites.net/websocket"
         try:
             # The async with statement handles connection and cleanup automatically
