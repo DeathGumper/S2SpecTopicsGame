@@ -67,10 +67,9 @@ public class Stats {
         if (strength + str >= 0) {
             strength += str;
             return true;
-        } else {
-            strength = Math.max(0, strength + str);
-            return false;
         }
+        strength = 0;
+        return false;
     }
 
     //Defense
@@ -96,10 +95,9 @@ public class Stats {
         if (defense + def >= 0) {
             defense += def;
             return true;
-        } else {
-            defense = Math.max(0, defense + def);
-            return false;
         }
+        defense = 0;
+        return false;
     }
 
     //Dexterity
@@ -125,10 +123,9 @@ public class Stats {
         if (dexterity + dex >= 0) {
             dexterity += dex;
             return true;
-        } else {
-            dexterity = Math.max(0, dexterity + dex);
-            return false;
         }
+        dexterity = 0;
+        return false;
     }
 
     //Speed
@@ -154,10 +151,9 @@ public class Stats {
         if (speed + spd >= 0) {
             speed += spd;
             return true;
-        } else {
-            speed = Math.max(0, speed + spd);
-            return false;
         }
+        speed = 0;
+        return false;
     }
 
     //Accuracy
@@ -183,10 +179,9 @@ public class Stats {
         if (accuracy + acc >= 0) {
             accuracy += acc;
             return true;
-        } else {
-            accuracy = Math.max(0, accuracy + acc);
-            return false;
         }
+        accuracy = 0;
+        return false;
     }
 
 }
