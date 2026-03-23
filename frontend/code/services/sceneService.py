@@ -68,6 +68,10 @@ class SceneService:
     def battlestageSetup(self):
         battlestageScene = self.getSceneByName("battlestage")
 
+        battlestageScene.makeGameObject("friendlycreature", (500, 300), (100, 100), (0, 0, 255))
+
+        battlestageScene.makeGameObject("enemyCreature", (100, 100), (100, 100), (255, 0, 0))
+
         battlestageScene.makeActionButton("Battle Stage!", lambda: print("You happen to be in the battle stage rn"), (10, 10))
 
         battlestageScene.makeActionButton("End Battles!", lambda: asyncio.create_task(gameController.endBattleStage()), (100, 400))

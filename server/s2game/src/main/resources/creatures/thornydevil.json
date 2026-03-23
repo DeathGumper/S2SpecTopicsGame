@@ -1,0 +1,12 @@
+{
+    "id": "thorny-devil",
+    "name": "Thorny Devil",
+    "stats": {
+        "maxHealth": 3000,
+        "strength": 4000,
+        "defense": 9000,
+        "dexterity": 5500,
+        "speed": 6500,
+        "accuracy": 4000
+    }
+}

@@ -118,6 +118,8 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
 
             // Temporary
             case "END_BATTLES":
+
+                // TODO: get rid of this
                 System.out.println("Battle stage is ending!");
                 // Ends all battles in that lobbyState
                 lobbyCommandService.handleBattleEnd(

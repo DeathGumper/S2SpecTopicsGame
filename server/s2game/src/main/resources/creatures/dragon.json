@@ -1,0 +1,12 @@
+{
+    "id": "dragon",
+    "name": "Dragon",
+    "stats": {
+        "maxHealth": 8000,
+        "strength": 7000,
+        "defense": 6000,
+        "dexterity": 2000,
+        "speed": 3000,
+        "accuracy": 5500
+    }
+}

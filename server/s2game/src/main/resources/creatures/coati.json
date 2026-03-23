@@ -1,0 +1,12 @@
+{
+    "id": "coati",
+    "name": "Coati",
+    "stats": {
+        "maxHealth": 3000,
+        "strength": 2000,
+        "defense": 3000,
+        "dexterity": 7000,
+        "speed": 6500,
+        "accuracy": 9000
+    }
+}

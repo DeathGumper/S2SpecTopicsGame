@@ -1,0 +1,12 @@
+{
+    "id": "argali",
+    "name": "Argali",
+    "stats": {
+        "maxHealth": 5000,
+        "strength": 3000,
+        "defense": 7000,
+        "dexterity": 7000,
+        "speed": 3000,
+        "accuracy": 5000
+    }
+}

@@ -6,11 +6,6 @@ from visuals.clickable import Clickable
 
 class InputBox(Clickable):
     defaultText = "Input"
-    inputText = None
-    text = None
-    rect = None
-    
-    lastPress = None
 
     def __init__(self, position: tuple, size: tuple, color: tuple=None, defaultText: str=None):
         self.inputText = ""
@@ -20,6 +15,9 @@ class InputBox(Clickable):
             self.color = color
         if defaultText != None:
             self.defaultText = defaultText
+
+        self.lastPress = None
+        self.inputText = ""
         
         self.rect = pygame.Rect(position[0], position[1], size[0], size[1])
 
