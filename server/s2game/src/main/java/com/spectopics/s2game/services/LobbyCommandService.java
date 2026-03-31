@@ -8,6 +8,7 @@ import com.spectopics.s2game.dto.clientPayloads.CreateLobbyPayload;
 import com.spectopics.s2game.dto.clientPayloads.JoinLobbyPayload;
 import com.spectopics.s2game.dto.clientPayloads.ReadyUpPayload;
 import com.spectopics.s2game.dto.clientPayloads.StartGamePayload;
+import com.spectopics.s2game.models.Creature;
 import com.spectopics.s2game.models.LobbyState;
 import com.spectopics.s2game.models.Player;
 
@@ -23,6 +24,7 @@ public class LobbyCommandService {
     public void handleCreateLobby(CreateLobbyPayload payload, WebSocketSession session) throws Exception {
 
         Player owner = PlayerService.MakePlayer(payload.playerName, session);
+        System.out.println("lobby id: " + payload.lobbyId + " owner: " + owner.getName());
         LobbyState lobby = LobbyService.AddNew(payload.lobbyId, owner);
         
         // If the lobby already exists w the lobby id requested, then say no no no, bad client, try again
@@ -69,6 +71,8 @@ public class LobbyCommandService {
         Player player = PlayerService.GetPlayerBySession(session);
         System.out.println("Player: " + player.getName() + " is ready!");
         player.setReady(true);
+
+        gameEventService.sendLobbyStateToClients(LobbyService.GetLobbyByPlayerId(player.getId()));
     }
 
     public void handleBattleEnd(String lobbyId, WebSocketSession session) throws Exception {
@@ -77,6 +81,16 @@ public class LobbyCommandService {
         if (LobbyStageService.EndBattleStage(lobby)) {
             gameEventService.resultsStageStarted(lobby);
         }
+    }
+
+    public void buyRandomCreature(WebSocketSession session) {
+        Player player = PlayerService.GetPlayerBySession(session);
+        Creature creature = CreatureService.GetRandomCreature();
+        PlayerService.GivePlayerCreature(player, creature);
+
+        System.out.println("Player " + player.getName() + " has requested to buy a random creature: " + creature);
+
+        gameEventService.sendLobbyStateToClients(LobbyService.GetLobbyByPlayerId(player.getId()));
     }
 
     public void handleActionCalled(ActionPayload payload, WebSocketSession session) throws Exception {

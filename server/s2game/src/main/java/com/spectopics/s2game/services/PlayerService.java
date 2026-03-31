@@ -7,6 +7,7 @@ import org.springframework.web.socket.WebSocketSession;
 
 import com.spectopics.s2game.models.LobbyState;
 import com.spectopics.s2game.models.Player;
+import com.spectopics.s2game.models.Creature;
 
 public class PlayerService {
     
@@ -51,5 +52,9 @@ public class PlayerService {
             }
         }
         return null;
+    }
+
+    public static void GivePlayerCreature(Player player, Creature creature) {
+        player.AddCreature(creature);
     }
 }

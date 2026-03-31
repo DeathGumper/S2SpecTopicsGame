@@ -31,6 +31,9 @@ class GameController:
     async def endBattleStage(self):
         await websocketConnection.sendMessage(ClientMessage(type="END_BATTLES", payload=CurrentLobbyStateHandler.lobbyState.id))
 
+    async def buyCreature(self):
+        await websocketConnection.sendMessage(ClientMessage(type="BUY_RANDOM_CREATURE", payload=None))
+
 gameController = GameController()
         
 

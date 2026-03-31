@@ -38,16 +38,20 @@ class SceneService:
         lobbyingScene = self.getSceneByName("lobbying")
 
         # Name input box
-        nameInput = lobbyingScene.makeInputBox((400, 100), (100, 40), defaultText="Name?")
+        lobbyingScene.makeInputBox("nameInput", (400, 100), (100, 40), defaultText="Name?")
 
         # Id input box
-        idInput = lobbyingScene.makeInputBox((400, 200), (100, 40), defaultText="Id?")
+        lobbyingScene.makeInputBox("idInput", (400, 200), (100, 40), defaultText="Id?")
         
         # Join Lobby and then go to lobby scene if successful
-        lobbyingScene.makeActionButton("Join", lambda: asyncio.create_task(lobbyController.joinLobby(nameInput.inputText, idInput.inputText)), (100, 100))
+        lobbyingScene.makeActionButton("Join", lambda: asyncio.create_task(lobbyController.joinLobby(
+            lobbyingScene.getInputBoxByName("nameInput").getInputText(), 
+            lobbyingScene.getInputBoxByName("idInput").getInputText())), (100, 100))
 
         # Create Lobby and then go to lobby scene if successful
-        lobbyingScene.makeActionButton("Create", lambda: asyncio.create_task(lobbyController.createLobby(nameInput.inputText, idInput.inputText)), (100, 200))
+        lobbyingScene.makeActionButton("Create", lambda: asyncio.create_task(lobbyController.createLobby(
+            lobbyingScene.getInputBoxByName("nameInput").getInputText(), 
+            lobbyingScene.getInputBoxByName("idInput").getInputText())), (100, 200))
 
     def lobbySetup(self):
         # Get the lobby scene
@@ -55,6 +59,8 @@ class SceneService:
 
         # Start Game and then go to buy stage
         lobbyScene.makeActionButton("Start Game!", lambda: asyncio.create_task(gameController.startGame()), (100, 100))
+
+        # lobbyScene.makeActionButton("0/0", lambda: print("Hi"), (500, 100), (40, 40), "readyCounterButton")
 
     def buystageSetup(self):
         buystageScene = self.getSceneByName("buystage")
@@ -65,10 +71,17 @@ class SceneService:
 
         buystageScene.makeActionButton("Ready Up!", lambda: asyncio.create_task(gameController.readyUp()), (100, 100))
 
+        # temporary
+        # Buys a random creature and puts it in your creature list
+        buystageScene.makeActionButton("Buy Creature", lambda: asyncio.create_task(gameController.buyCreature()), (100, 200))
+
+        for i in range(1, 6):
+            buystageScene.makeGameObject("Creature" + str(i), (75 + (100 * (i-1)), 400), (75, 75), (200, 200, 0), True)
+
     def battlestageSetup(self):
         battlestageScene = self.getSceneByName("battlestage")
 
-        battlestageScene.makeGameObject("friendlycreature", (500, 300), (100, 100), (0, 0, 255))
+        battlestageScene.makeGameObject("friendlycreature", (500, 300), (200, 200), (0, 0, 255))
 
         battlestageScene.makeGameObject("enemyCreature", (100, 100), (100, 100), (255, 0, 0))
 
@@ -92,21 +105,20 @@ class SceneService:
     # Switch to different scene by name
     def switchScene(self, newSceneName: str):
         newScene = self.getSceneByName(newSceneName)
-        if newScene:
-            self.currentScene = newScene
-        else:
+
+        if newScene == None:
             print("failed to find scene for " + newSceneName)
             return
         
-        if self.currentScene.hasSetup == False:
-            # Get the scene setup by name string
-            setupFunc = getattr(self, newSceneName + "Setup")
+        if not newScene.hasSetup:
+            setupFunc = getattr(self, newSceneName + "Setup", None)
             if setupFunc:
                 setupFunc()
+                newScene.hasSetup = True
             else:
                 print("failed to find setup function for " + newSceneName)
 
-        print(self.currentScene.name)
+        self.currentScene = newScene
 
     # Called every frame
     def update(self):

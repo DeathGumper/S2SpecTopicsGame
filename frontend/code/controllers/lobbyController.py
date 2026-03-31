@@ -15,6 +15,7 @@ import json
 
 class LobbyController:
     async def createLobby(self, playerName: str, lobbyId: str):
+        print(playerName + " : " + lobbyId)
         await websocketConnection.sendMessage(ClientMessage(type="CREATE_LOBBY", payload=CreateLobbyPayload(playerName, lobbyId)))
 
     async def joinLobby(self, playerName: str, lobbyId: str):

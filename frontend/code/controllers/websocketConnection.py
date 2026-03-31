@@ -75,7 +75,7 @@ class WebsocketConnection:
                 """Here the payload has the lobbyState and the playerId"""
                 payload = LobbyJoinedPayload.model_validate(serverMessage.payload)
                 lobbyState = LobbyState.model_validate(payload.lobbyState)
-                self.playerId = payload.playerId
+                CurrentLobbyStateHandler.playerId = payload.playerId
 
                 CurrentLobbyStateHandler.lobbyState = lobbyState
 
@@ -95,6 +95,13 @@ class WebsocketConnection:
                 """This just has the lobbyState"""
                 payload = ResultsStageStartedPayload.model_validate(serverMessage.payload)
                 CurrentLobbyStateHandler.lobbyState = LobbyState.model_validate(payload.lobbyState)
+
+            elif (serverMessage.type == "UPDATE"):
+                """This is just a simple lobbyState update"""
+                payload = LobbyState.model_validate(serverMessage.payload)
+                CurrentLobbyStateHandler.lobbyState = payload
+
+                print("UPDATEEEDDDDD")
 
             else:
                 print("Type " + serverMessage.type + " was not recognized.")

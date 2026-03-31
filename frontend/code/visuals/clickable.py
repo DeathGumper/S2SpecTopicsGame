@@ -1,6 +1,9 @@
 import pygame
 import asyncio
-class Clickable:
+
+from visuals.visual import Visual
+
+class Clickable(Visual):
     clickType = "up" # Default is "up"; when the mouse is released. "down" would be when the mouse is pressed down.
     def __init__(self, rect: pygame.Rect, action: callable):
         self.rect = rect

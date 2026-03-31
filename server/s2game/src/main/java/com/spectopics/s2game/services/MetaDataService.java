@@ -40,7 +40,7 @@ public class MetaDataService {
 
                 // Add creatures to the Creature's static collection
                 for (Creature creature : creatures) {
-                    Creature.AddNew(creature);
+                    CreatureService.AddNew(creature);
                 }
             }
         } catch (Exception e) {

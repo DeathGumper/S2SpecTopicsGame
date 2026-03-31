@@ -117,6 +117,12 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
                 break;
 
             // Temporary
+            case "BUY_RANDOM_CREATURE":
+                lobbyCommandService.buyRandomCreature(
+                    session
+                );
+                break;
+            
             case "END_BATTLES":
 
                 // TODO: get rid of this

@@ -3,13 +3,12 @@ import pygame
 from services.uiService import UIService
 
 class InputBoxService:
-    inputBoxes = None
-    selectedInputBox = None
     def __init__(self):
+        self.selectedInputBox = None
         self.inputBoxes = []
 
-    def addNew(self, position, size, color, defaultText):
-        inputBox = UIService.makeInputBox(position, size, color, defaultText)
+    def addNew(self, name, position, size, color, defaultText):
+        inputBox = UIService.makeInputBox(name, position, size, color, defaultText)
         self.inputBoxes.append(inputBox)
         return inputBox
     
@@ -29,6 +28,14 @@ class InputBoxService:
     def render(self, surface: pygame.Surface):
         for inputBox in self.inputBoxes:
             inputBox.render(surface)
+
+    def getInputBoxByName(self, name):
+        for inputBox in self.inputBoxes:
+            if (inputBox.name == name):
+                print("InputText: " + inputBox.getInputText())
+                return inputBox
+        
+        return None
 
     def handleInputBoxes(self):
         self.selectedInputBox = None

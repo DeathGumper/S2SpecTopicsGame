@@ -10,10 +10,10 @@ from controllers.gameController import gameController
 from controllers.lobbyController import lobbyController
 from models.currentLobbyStateHandler import CurrentLobbyStateHandler
 from services.sceneService import SceneService
+from visuals.gameObject import GameObject
 
 
 class GameManager:
-
     # Services
     sceneService = None
 
@@ -30,17 +30,44 @@ class GameManager:
         self.sceneService.update()
 
         lobbyState = CurrentLobbyStateHandler.lobbyState    
-            
+        player = None
+
         if (lobbyState == None):
             return
+        
+        readyCounter: int = 0
+        playerCount: int = 0
+        for p in lobbyState.players:
+            playerCount += 1
+            if p.ready:
+                readyCounter += 1
+            if p.id == CurrentLobbyStateHandler.playerId:
+                player = p
         
         if (lobbyState.stage == "LOBBY"):
             if (self.sceneService.currentScene.name != "lobby"):
                 self.sceneService.switchScene("lobby")
+
+            readyCounterButton = self.sceneService.currentScene.getButtonByName("readyCounterButton")
+            if (readyCounterButton != None):
+                readyCounterButton.setLabel(str(readyCounter) + "/" + str(playerCount))
         
         if (lobbyState.stage == "BUYSTAGE"):
             if (self.sceneService.currentScene.name != "buystage"):
                 self.sceneService.switchScene("buystage")
+            
+            if (player != None):
+            
+                for i, creature in enumerate(player.creatures):
+                    # TODO: display the actual creature sprite
+                    creatureGo: GameObject = self.sceneService.currentScene.getGameObjectByName("Creature" + str(i+1))
+
+                    if creature != None:
+                        # Temp
+                        sprite = pygame.Surface((75, 75))
+                        sprite.fill((0, 255, 0))
+
+                        creatureGo.setSprite(sprite)
         
         if (lobbyState.stage == "BATTLESTAGE"):
             if (self.sceneService.currentScene.name != "battlestage"):

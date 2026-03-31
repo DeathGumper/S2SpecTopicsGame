@@ -11,12 +11,11 @@ Button class that inherits from Clickable. Represents a clickable button in the 
 """
 
 class Button(Clickable):
-
-    def __init__(self, label: str, action: callable, position: tuple=(0, 0), size: tuple=None, color: tuple=DEFAULT_BUTTON_COLOR):
+    def __init__(self, label: str, action: callable, position: tuple=(0, 0), size: tuple=None, color: tuple=DEFAULT_BUTTON_COLOR, name: str=None):
         # Text on the button
-        self.label = label
+        self.setLabel(label)
         self.color = color
-        self.setupText()
+        self.name = name
         if size == None:
             size = (self.text.get_width() + 10, self.text.get_height() + 10) # Default size based on text size
 
@@ -30,6 +29,10 @@ class Button(Clickable):
     # Initialize the text.
     def setupText(self):
         self.text = FONT.render(self.label, True, (0, 0, 0)) # Render the button label as text
+
+    def setLabel(self, newLabel):
+        self.label = newLabel
+        self.setupText()
 
     # Dynamic changing of position.
     def setPosition(self, position: tuple):

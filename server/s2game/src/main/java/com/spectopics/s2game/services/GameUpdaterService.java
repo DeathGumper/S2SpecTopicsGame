@@ -6,6 +6,7 @@ import com.spectopics.s2game.models.Player;
 
 public class GameUpdaterService {
     private Thread updater;
+    private volatile boolean stillUpdating = true;
     private LobbyState lobbyState;
 
     private GameEventService gameEventService;
@@ -17,11 +18,6 @@ public class GameUpdaterService {
     // Called 30 times per second
     private void Update(long nanosSinceLastFrame) {
         double timeSinceLastFrame = nanosSinceLastFrame/1_000_000_000.0;
-
-        // if (lobbyState.getPlayers().size() == 0) {
-        //     StopUpdating();
-        //     LobbyService.KillLobby(lobbyState);
-        // }
 
         // If we are in the GameStage or BuyStage or ResultsStage then we subtract the timer.
         if (this.lobbyState.getStage() != StageState.LOBBY) {
@@ -61,16 +57,17 @@ public class GameUpdaterService {
         }
 
         System.out.println(this.lobbyState.getStageTimer() + " players: " + lobbyState.getPlayers().size());
+
+
+        if (lobbyState.getPlayers().size() == 0) {
+            StopUpdating();
+        }
     }
     
     public void StopUpdating() {
+        stillUpdating = false;
         if (this.updater != null && this.updater.isAlive()) {
             this.updater.interrupt(); // Interrupt sleep if any
-            try {
-                this.updater.join(); // Wait for thread to finish cleanly
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -80,7 +77,7 @@ public class GameUpdaterService {
         this.updater = new Thread(() -> {
             long lastTime = System.nanoTime();
             
-            while (true) {
+            while (stillUpdating) {
                 long now = System.nanoTime();
 
                 long delta = now - lastTime;
