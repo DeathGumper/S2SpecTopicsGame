@@ -18,6 +18,34 @@ public class Creature {
         addTotalSpeed(this.stats.getSpeed());
     }
 
+<<<<<<< HEAD
+=======
+    public void NextTurn() {
+        /*
+        Updates variables, calls methods, and other things
+         that need to be done at the start of each turn
+        */
+
+        //TODO
+        /*
+        Current list of what to add here:
+            Damage/Heal Over Time
+        */
+    }
+
+
+
+    // Creature declaration stuff
+    public static HashMap<String, Creature> creatures = new HashMap<>();
+    public static void AddNew(Creature creature) {
+        creatures.put(creature.getName().replaceAll(" ", "").toLowerCase(), creature);
+    }
+
+    public Creature GetNew(String name) {
+        return creatures.get(name).copy();
+    }
+
+>>>>>>> main
     public Creature copy() {
         Creature newCreature = new Creature();
         newCreature.setName(this.name);

@@ -1,16 +1,17 @@
 plugins {
-	java
-	id("org.springframework.boot") version "4.0.2"
-	id("io.spring.dependency-management") version "1.1.7"
+    java
+    id("org.springframework.boot") version "4.0.2"
+    id("io.spring.dependency-management") version "1.1.7"
+    id("com.microsoft.azure.azurewebapp") version "1.14.0"
 }
 
 group = "com.spectopics"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.4-SNAPSHOT"
 description = "Server for spec topics semester 2 game"
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(25)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 

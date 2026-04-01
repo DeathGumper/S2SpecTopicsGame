@@ -2,7 +2,7 @@ import pygame
 
 pygame.font.init()
 
-SERVER_URL = 'http://localhost:7831'
+SERVER_URL = 'wss://s2spectopicsserver-dtg3dac0h6d8b8hf.eastus-01.azurewebsites.net'
 FONT = pygame.font.Font(None, 36) # Default font for rendering text in the game.
 
 WINDOWED_SIZE = (800, 600)

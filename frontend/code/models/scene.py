@@ -24,6 +24,9 @@ class Scene:
 
         self.inputBoxHandler.handleInputBoxes()
 
+    def getObjectByName(self):
+        pass
+
     # Button that has an action associated with it ex: navigation between scenes
     def makeActionButton(self, label: str, action, position: tuple, size: tuple=None, name: str=None):
         self.buttons.append(UIService.makeButton(label, action, position, size, name))
