@@ -7,5 +7,6 @@ class Player(BaseModel):
     name: str
     id: str
     creatures: list[Optional[Creature]]
+    activeCreatureIndex: int
     ready: bool
     owner: bool

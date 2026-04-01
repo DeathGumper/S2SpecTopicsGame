@@ -38,7 +38,5 @@ public class GameEventService {
 
     public void sendLobbyStateToClients(LobbyState lobby) {
         publisher.publishEvent(lobby);
-
-        System.out.println("sent lobbystate from ges");
     }
 }

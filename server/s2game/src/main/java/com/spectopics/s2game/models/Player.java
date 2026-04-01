@@ -11,6 +11,7 @@ public class Player {
     private String name;
     private String id;
     private Creature[] creatures;
+    private int activeCreatureIndex;
     private boolean ready;
     private boolean owner = false;
     @JsonIgnore
@@ -21,6 +22,23 @@ public class Player {
         this.id = session.getId();
         this.session = session;
         this.creatures = new Creature[5];
+        activeCreatureIndex = 0;
+    }
+
+    public boolean NextCreature() {
+        return SetActiveCreature(activeCreatureIndex + 1);
+    }
+
+    public boolean SetActiveCreature(int index) {
+        if (index > creatures.length)
+            return false;
+        activeCreatureIndex = index;
+        System.out.println(index);
+        return true;
+    }
+
+    public Creature GetActiveCreature() {
+        return creatures[activeCreatureIndex];
     }
 
     public boolean AddCreature(Creature creature) {

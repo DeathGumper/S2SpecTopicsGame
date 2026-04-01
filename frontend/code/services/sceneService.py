@@ -89,6 +89,8 @@ class SceneService:
 
         battlestageScene.makeActionButton("End Battles!", lambda: asyncio.create_task(gameController.endBattleStage()), (100, 400))
 
+        battlestageScene.makeActionButton("Kill Enemy Creature", lambda: asyncio.create_task(gameController.callAction(" ")), (400, 400))
+
     def resultsstageSetup(self):
         resultsstageScene = self.getSceneByName("resultsstage")
 

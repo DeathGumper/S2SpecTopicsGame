@@ -22,13 +22,13 @@ public class GameUpdaterService {
         // If we are in the GameStage or BuyStage or ResultsStage then we subtract the timer.
         if (this.lobbyState.getStage() != StageState.LOBBY) {
             this.lobbyState.setStageTimer((float) (this.lobbyState.getStageTimer() - timeSinceLastFrame)); // Subtract the amount of time since the last frame
-            
         }
 
         if (this.lobbyState.getStage() == StageState.BUYSTAGE) {
             boolean allReady = true;
             // iterate thru all players, if any player is not ready then return
             for (Player player : lobbyState.getPlayers()) {
+                System.out.println(player.getName() + ": " + player.isReady());
                 if (!player.isReady()) allReady = false;
             }
 
@@ -43,6 +43,15 @@ public class GameUpdaterService {
                     e.printStackTrace();
                 }
             }
+        }
+
+        if (this.lobbyState.getStage() == StageState.BATTLESTAGE) {
+            // Temporary, this accounts for only 1 battle ongoing at a time
+            if (this.lobbyState.getBattles().get(0).isBattleDone()) {
+                System.out.println("The battle stage is over!");
+                LobbyStageService.EndBattleStage(this.lobbyState);
+            }
+
         }
 
         if (this.lobbyState.getStage() == StageState.RESULTSSTAGE) {

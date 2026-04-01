@@ -44,7 +44,6 @@ class Scene:
     
     def getButtonByName(self, name):
         for button in self.buttons:
-            print(str(button.name) + ": " + str(name))
             if button.name == name:
                 return button
             

@@ -8,6 +8,7 @@ import com.spectopics.s2game.dto.clientPayloads.CreateLobbyPayload;
 import com.spectopics.s2game.dto.clientPayloads.JoinLobbyPayload;
 import com.spectopics.s2game.dto.clientPayloads.ReadyUpPayload;
 import com.spectopics.s2game.dto.clientPayloads.StartGamePayload;
+import com.spectopics.s2game.models.Battle;
 import com.spectopics.s2game.models.Creature;
 import com.spectopics.s2game.models.LobbyState;
 import com.spectopics.s2game.models.Player;
@@ -94,15 +95,12 @@ public class LobbyCommandService {
     }
 
     public void handleActionCalled(ActionPayload payload, WebSocketSession session) throws Exception {
-        // TODO: action calling
+        Player player = PlayerService.GetPlayerBySession(session);
+        LobbyState lobby = LobbyService.GetLobbyByPlayerId(player.getId());
+        Battle battle = BattleService.getBattleByPlayerId(lobby.getBattles(), player.getId());
 
-        // Get the lobby
+        ActionService.CallAction(battle, "");
 
-        // Get the player by the session
-
-        // TODO: make the action calling service
-        // TODO: This should handle if the action should happen and then actually enacting the action.
-
-        // Call the action thru the action calling server
+        gameEventService.sendLobbyStateToClients(LobbyService.GetLobbyByPlayerId(player.getId()));
     }
 }

@@ -19,7 +19,27 @@ public class Battle {
         this.player2 = player2;
     }
 
+    public void NextTurn() {
+        // This is temporary, it doenst implement the system of next turn is the creature with the lowest speed
+        if (this.state == BattleState.PLAYER1) this.state = BattleState.PLAYER2;
+        else this.state = BattleState.PLAYER1;
+    }
+    
+    public void NextP1Creature() {
+        if (this.player1.NextCreature() == false)
+            state = BattleState.DONE;
+    }
+
+    public void NextP2Creature() {
+        if (!this.player2.NextCreature() == false)
+            state = BattleState.DONE;
+    }
+
     public boolean isBattleDone() {
         return state == BattleState.DONE;
+    }
+
+    public BattleState GetBattleState() {
+        return state;
     }
 }
