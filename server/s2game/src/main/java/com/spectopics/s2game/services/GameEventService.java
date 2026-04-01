@@ -35,4 +35,8 @@ public class GameEventService {
     public void resultsStageStarted(LobbyState lobby) {
         publisher.publishEvent(new ResultsStageStartedEvent(lobby));
     }
+
+    public void sendLobbyStateToClients(LobbyState lobby) {
+        publisher.publishEvent(lobby);
+    }
 }

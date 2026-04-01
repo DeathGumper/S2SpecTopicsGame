@@ -16,7 +16,6 @@ public class LobbyState {
     private String name;
     private String id;
 
-    
     private List<Player> players;
     private List<Battle> battles;
 

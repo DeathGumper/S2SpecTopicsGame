@@ -11,6 +11,7 @@ import urllib.request
 from dto.clientMessage import ClientMessage
 from dto.clientPayloads.StartGamePayload import StartGamePayload
 from dto.clientPayloads.ReadyUpPayload import ReadyUpPayload
+from dto.clientPayloads.ActionPayload import ActionPayload
 from models.creature import Creature
 from utils.CONSTANTS import SERVER_URL
 from controllers.lobbyController import lobbyController
@@ -30,6 +31,12 @@ class GameController:
 
     async def endBattleStage(self):
         await websocketConnection.sendMessage(ClientMessage(type="END_BATTLES", payload=CurrentLobbyStateHandler.lobbyState.id))
+
+    async def buyCreature(self):
+        await websocketConnection.sendMessage(ClientMessage(type="BUY_RANDOM_CREATURE", payload=None))
+
+    async def callAction(self, action: str):
+        await websocketConnection.sendMessage(ClientMessage(type="CALL_ACTION", payload=ActionPayload(action)))
 
 gameController = GameController()
         

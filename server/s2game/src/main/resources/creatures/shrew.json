@@ -1,0 +1,12 @@
+{
+    "id": "shrew",
+    "name": "Shrew",
+    "stats": {
+        "maxHealth": 5000,
+        "strength": 2000,
+        "defense": 5000,
+        "dexterity": 7500,
+        "speed": 2000,
+        "accuracy": 8000
+    }
+}

@@ -1,7 +1,5 @@
 package com.spectopics.s2game.models;
 
-import java.util.HashMap;
-
 import lombok.Data;
 
 @Data
@@ -20,6 +18,8 @@ public class Creature {
         addTotalSpeed(this.stats.getSpeed());
     }
 
+<<<<<<< HEAD
+=======
     public void NextTurn() {
         /*
         Updates variables, calls methods, and other things
@@ -45,6 +45,7 @@ public class Creature {
         return creatures.get(name).copy();
     }
 
+>>>>>>> main
     public Creature copy() {
         Creature newCreature = new Creature();
         newCreature.setName(this.name);

@@ -29,6 +29,11 @@ public class MetaDataService {
                     Creature creature =
                             mapper.readValue(stream, Creature.class);
 
+<<<<<<< HEAD
+                // Add creatures to the Creature's static collection
+                for (Creature creature : creatures) {
+                    CreatureService.AddNew(creature);
+=======
                     Creature.AddNew(creature);
 
                     count++;
@@ -38,6 +43,7 @@ public class MetaDataService {
                 } catch (Exception e) {
                     System.err.println("Failed loading: " + resource.getFilename());
                     e.printStackTrace();
+>>>>>>> main
                 }
             }
 

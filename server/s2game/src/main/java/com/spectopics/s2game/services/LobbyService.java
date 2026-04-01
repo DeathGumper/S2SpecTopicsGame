@@ -28,6 +28,16 @@ public class LobbyService {
         return lobbies.remove(lobby);
     }
 
+    public static LobbyState GetLobbyByPlayerId(String id) {
+        for (LobbyState lobby : lobbies) {
+            for (Player p : lobby.getPlayers()) {
+                if (p.getId().equals(id)) return lobby;
+            }
+        }
+
+        return null;
+    }
+
     public static List<LobbyState> GetAllLobbies() {
         return lobbies;
     }

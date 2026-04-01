@@ -6,6 +6,7 @@ import com.spectopics.s2game.models.Player;
 
 public class GameUpdaterService {
     private Thread updater;
+    private volatile boolean stillUpdating = true;
     private LobbyState lobbyState;
 
     private GameEventService gameEventService;
@@ -18,21 +19,16 @@ public class GameUpdaterService {
     private void Update(long nanosSinceLastFrame) {
         double timeSinceLastFrame = nanosSinceLastFrame/1_000_000_000.0;
 
-        // if (lobbyState.getPlayers().size() == 0) {
-        //     StopUpdating();
-        //     LobbyService.KillLobby(lobbyState);
-        // }
-
         // If we are in the GameStage or BuyStage or ResultsStage then we subtract the timer.
         if (this.lobbyState.getStage() != StageState.LOBBY) {
             this.lobbyState.setStageTimer((float) (this.lobbyState.getStageTimer() - timeSinceLastFrame)); // Subtract the amount of time since the last frame
-            
         }
 
         if (this.lobbyState.getStage() == StageState.BUYSTAGE) {
             boolean allReady = true;
             // iterate thru all players, if any player is not ready then return
             for (Player player : lobbyState.getPlayers()) {
+                System.out.println(player.getName() + ": " + player.isReady());
                 if (!player.isReady()) allReady = false;
             }
 
@@ -49,6 +45,15 @@ public class GameUpdaterService {
             }
         }
 
+        if (this.lobbyState.getStage() == StageState.BATTLESTAGE) {
+            // Temporary, this accounts for only 1 battle ongoing at a time
+            if (this.lobbyState.getBattles().get(0).isBattleDone()) {
+                System.out.println("The battle stage is over!");
+                LobbyStageService.EndBattleStage(this.lobbyState);
+            }
+
+        }
+
         if (this.lobbyState.getStage() == StageState.RESULTSSTAGE) {
             if (this.lobbyState.getStageTimer() <= 0) {
                 LobbyStageService.GoToBuyStage(this.lobbyState);
@@ -61,16 +66,17 @@ public class GameUpdaterService {
         }
 
         System.out.println(this.lobbyState.getStageTimer() + " players: " + lobbyState.getPlayers().size());
+
+
+        if (lobbyState.getPlayers().size() == 0) {
+            StopUpdating();
+        }
     }
     
     public void StopUpdating() {
+        stillUpdating = false;
         if (this.updater != null && this.updater.isAlive()) {
             this.updater.interrupt(); // Interrupt sleep if any
-            try {
-                this.updater.join(); // Wait for thread to finish cleanly
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -80,7 +86,7 @@ public class GameUpdaterService {
         this.updater = new Thread(() -> {
             long lastTime = System.nanoTime();
             
-            while (true) {
+            while (stillUpdating) {
                 long now = System.nanoTime();
 
                 long delta = now - lastTime;

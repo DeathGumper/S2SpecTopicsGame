@@ -8,6 +8,7 @@ import com.spectopics.s2game.dto.serverPayloads.BattlesStartedPayload;
 import com.spectopics.s2game.dto.serverPayloads.BuyStageStartedPayload;
 import com.spectopics.s2game.dto.serverPayloads.LobbyJoinedPayload;
 import com.spectopics.s2game.dto.serverPayloads.ResultsStageStartedPayload;
+import com.spectopics.s2game.models.LobbyState;
 import com.spectopics.s2game.models.Player;
 import com.spectopics.s2game.services.BattleService;
 import com.spectopics.s2game.websocket.handlers.SocketConnectionHandler;
@@ -64,6 +65,16 @@ public class SocketEventListener {
             event.lobby,
             "RESULTSSTAGE_STARTED",
             new ResultsStageStartedPayload(event.lobby)
+        );
+    }
+
+    @EventListener
+    public void handleLobbyStateSend(LobbyState lobby) throws Exception {
+        System.out.println("Update sent to clients");
+        socketHandler.broadcastToLobby(
+            lobby, 
+            "UPDATE", 
+            lobby
         );
     }
 }

@@ -1,0 +1,12 @@
+{
+    "id": "dog",
+    "name": "Dog",
+    "stats": {
+        "maxHealth": 4500,
+        "strength": 6500,
+        "defense": 5000,
+        "dexterity": 2000,
+        "speed": 4000,
+        "accuracy": 3000
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "id": "cat",
+    "name": "Cat",
+    "stats": {
+        "maxHealth": 2000,
+        "strength": 2500,
+        "defense": 1500,
+        "dexterity": 7000,
+        "speed": 8000,
+        "accuracy": 7500
+    }
+}
