@@ -19,7 +19,18 @@ from controllers.lobbyController import lobbyController
 from managers.gameManager import GameManager
 from managers.lobbyManager import LobbyManager
 
-from utils.CONSTANTS import WINDOWED_SIZE, MENU_BACKGROUND_COLOR
+from utils.CONSTANTS import WINDOWED_SIZE, MENU_BACKGROUND_COLOR, TESTING
+
+import sys
+
+if "--test" in sys.argv:
+    print("Running in TEST mode")
+    TESTING.set(True)
+    # do test behavior
+else:
+    print("Running normally")
+    TESTING.set(False)
+    # normal behavior
 
 # Init pygame
 pygame.init()

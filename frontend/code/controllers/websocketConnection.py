@@ -15,7 +15,7 @@ from models.currentLobbyStateHandler import CurrentLobbyStateHandler
 from models.currentBattleStateHandler import CurrentBattleStateHandle
 from services.BattleService import BattleService
 
-from utils.CONSTANTS import SERVER_URL
+from utils.CONSTANTS import SERVER_URL, TESTING
 
 class WebsocketConnection:
     def __init__(self):
@@ -37,8 +37,9 @@ class WebsocketConnection:
             print(f"❌ Failed to send message: {e}")
 
     async def connectWebsocket(self):
-        #uri = "ws://localhost:8080/websocket" 
-        uri = "wss://s2spectopicsserver-dtg3dac0h6d8b8hf.eastus-01.azurewebsites.net/websocket"
+        uri = "ws://localhost:8080/websocket" 
+        if (not TESTING.get()):
+            uri = "wss://s2spectopicsserver-dtg3dac0h6d8b8hf.eastus-01.azurewebsites.net/websocket"
         try:
             # The async with statement handles connection and cleanup automatically
             self.websocket = await websockets.connect(uri)
