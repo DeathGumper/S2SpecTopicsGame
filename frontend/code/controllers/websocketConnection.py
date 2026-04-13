@@ -39,7 +39,7 @@ class WebsocketConnection:
     async def connectWebsocket(self):
         uri = "ws://localhost:8080/websocket" 
         if (not TESTING.get()):
-            uri = "wss://s2spectopicsserver-dtg3dac0h6d8b8hf.eastus-01.azurewebsites.net/websocket"
+            uri = SERVER_URL + "/websocket"
         try:
             # The async with statement handles connection and cleanup automatically
             self.websocket = await websockets.connect(uri)
