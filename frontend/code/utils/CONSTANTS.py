@@ -4,7 +4,7 @@ from utils.TestingBool import TestingBool
 
 pygame.font.init()
 
-SERVER_URL = 'wss://s2spectopicsserver-dtg3dac0h6d8b8hf.eastus-01.azurewebsites.net'
+SERVER_URL = 'wss://s2project.azurewebsites.net' # URL of the server for API calls.
 FONT = pygame.font.Font(None, 36) # Default font for rendering text in the game.
 
 WINDOWED_SIZE = (800, 600)

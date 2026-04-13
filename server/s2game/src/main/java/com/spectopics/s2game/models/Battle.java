@@ -31,7 +31,7 @@ public class Battle {
     }
 
     public void NextP2Creature() {
-        if (!this.player2.NextCreature() == false)
+        if (this.player2.NextCreature() == false)
             state = BattleState.DONE;
     }
 
