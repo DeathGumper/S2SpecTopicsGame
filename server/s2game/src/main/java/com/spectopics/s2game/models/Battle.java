@@ -42,4 +42,12 @@ public class Battle {
     public BattleState GetBattleState() {
         return state;
     }
+
+    public Player GetPlayer1() {
+        return player1;
+    }
+
+    public Player GetPlayer2() {
+        return player2;
+    }
 }
