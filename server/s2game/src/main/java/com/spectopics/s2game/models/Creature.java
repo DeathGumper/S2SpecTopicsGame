@@ -19,8 +19,9 @@ public class Creature {
         addTotalSpeed(this.stats.getSpeed());
     }
  
- 
- 
+    public Stats GetStats() {
+        return stats;
+    }
  
  
  
