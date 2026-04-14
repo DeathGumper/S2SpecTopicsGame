@@ -1,7 +1,8 @@
 from dataclasses import dataclass
-from pydantic import BaseModel
 
 from models.lobbyState import LobbyState
 
-class ResultsStageStartedPayload(BaseModel):
+
+@dataclass
+class ResultsStageStartedPayload:
     lobbyState: LobbyState

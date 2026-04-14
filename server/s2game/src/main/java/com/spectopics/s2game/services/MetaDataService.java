@@ -1,53 +1,33 @@
 package com.spectopics.s2game.services;
- 
-import java.util.stream.Stream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import tools.jackson.databind.ObjectMapper;
 import com.spectopics.s2game.models.Creature;
- 
+
 public class MetaDataService {
     public static void loadCreatureData() {
         try {
-            // Get the resources/creatures directory relative to the classpath
-            Path creaturesPath = Paths.get(ClassLoader.getSystemResource("creatures").toURI());
- 
-            // Read all JSON files from the creatures folder
-            try (Stream<Path> paths = Files.list(creaturesPath)) {
-                // Get all the creatures from JSON files
-                List<Creature> creatures = paths
-                    .filter(path -> path.toString().endsWith(".json"))
-                    .flatMap((Path path) -> {
-                        try {
-                            ObjectMapper mapper = new ObjectMapper();
-                            Creature creature = mapper.readValue(Files.readString(path), Creature.class);
-                            return Stream.of(creature);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            return Stream.empty();
-                        }
-                    })
-                    .collect(Collectors.toList());
- 
-                // Debug: Print loaded creatures
-                System.out.println("Loaded " + creatures.size() + " creatures");
-                for (Creature creature : creatures) {
-                    System.out.println("Creature: " + creature.getName() + ", Stats: " + creature.getStats());
-                }
- 
-                // Add creatures to the Creature's static collection
-                for (Creature creature : creatures) {
+            PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+            Resource[] resources = resolver.getResources("classpath:creatures/*.json");
+
+            ObjectMapper mapper = new ObjectMapper();
+            for (Resource resource : resources) {
+                try {
+                    Creature creature = mapper.readValue(resource.getInputStream(), Creature.class);
                     CreatureService.AddNew(creature);
+                    System.out.println("Loaded creature: " + creature.getName());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
+
+            System.out.println("Loaded " + resources.length + " creatures");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
- 
+
     public static void main(String[] args) {
         loadCreatureData();
     }
