@@ -1,14 +1,7 @@
-import websockets
-import asyncio
-
 import json
+import sys
 
 from dto.clientMessage import ClientMessage
-from dto.serverMessage import ServerMessage
-from dto.serverPayloads.LobbyJoinedPayload import LobbyJoinedPayload
-from dto.serverPayloads.BuyStageStartedPayload import BuyStageStartedPayload
-from dto.serverPayloads.BattlesStartedPayload import BattlesStartedPayload
-from dto.serverPayloads.ResultsStageStartedPayload import ResultsStageStartedPayload
 from models.lobbyState import LobbyState
 from dataclasses import asdict
 from models.currentLobbyStateHandler import CurrentLobbyStateHandler
@@ -17,114 +10,104 @@ from services.BattleService import BattleService
 
 from utils.CONSTANTS import SERVER_URL, TESTING
 
+IN_BROWSER = sys.platform == 'emscripten'
+
+if not IN_BROWSER:
+    import websockets
+    import asyncio
+
+
 class WebsocketConnection:
     def __init__(self):
         self.websocket = None
-        self.recvTask = None
-        self.latestUpdate = None
-        self.playerId = None
+        self._queue = []      # used in browser mode
+        self._recvTask = None # used in native mode
 
     async def sendMessage(self, message: ClientMessage):
         if not self.websocket:
-            print("❌ WebSocket not connected.")
+            print("WebSocket not connected.")
             return
 
         try:
-            await self.websocket.send(json.dumps(asdict(message)))
-            print(f"✅ Sent message: {message}")
+            payload = json.dumps(asdict(message))
+            if IN_BROWSER:
+                self.websocket.send(payload)
+            else:
+                await self.websocket.send(payload)
+            print("Sent message: " + str(message))
 
         except Exception as e:
-            print(f"❌ Failed to send message: {e}")
+            print("Failed to send message: " + str(e))
 
     async def connectWebsocket(self):
-        uri = "ws://localhost:8080/websocket" 
-        if (not TESTING.get()):
+        uri = "ws://localhost:8080/websocket"
+        if not TESTING.get():
             uri = SERVER_URL + "/websocket"
         try:
-            # The async with statement handles connection and cleanup automatically
-            self.websocket = await websockets.connect(uri)
-            self.recvTask = asyncio.create_task(self.websocket.recv())
+            if IN_BROWSER:
+                import platform
+                self.websocket = platform.window.WebSocket.new(uri)
+                self.websocket.onopen = lambda e: print("Connected to server websocket.")
+                self.websocket.onmessage = lambda e: self._queue.append(str(e.data))
+                self.websocket.onclose = lambda e: print("WebSocket closed.")
+                self.websocket.onerror = lambda e: print("WebSocket error.")
+            else:
+                self.websocket = await websockets.connect(uri)
+                self._recvTask = asyncio.create_task(self.websocket.recv())
+                print("Connected to server websocket.")
 
-            print("✅ Connected to server websocket for game updates.")
-
-        except ConnectionRefusedError:
-            print("❌ Could not connect to server. Is the server running?")
         except Exception as e:
-            print(f"An error occurred: {e}")
+            print("An error occurred: " + str(e))
 
     async def update(self):
-        if not self.recvTask:
-            return
-
-        # ONLY continue if message is ready
-        if not self.recvTask.done():
-            return
-
-        # If the task finished, check if it errored
-        if self.recvTask.exception():
-            print("❌ Recv error:", self.recvTask.exception())
-            return
+        if IN_BROWSER:
+            if not self._queue:
+                return
+            message = self._queue.pop(0)
+        else:
+            if not self._recvTask or not self._recvTask.done():
+                return
+            if self._recvTask.exception():
+                print("Recv error:", self._recvTask.exception())
+                self._recvTask = asyncio.create_task(self.websocket.recv())
+                return
+            message = self._recvTask.result()
+            self._recvTask = asyncio.create_task(self.websocket.recv())
 
         try:
-            message = self.recvTask.result()
             jsonMessage = json.loads(message)
-            serverMessage = ServerMessage(**jsonMessage)
+            msgType = jsonMessage['type']
+            payload = jsonMessage.get('payload')
 
-
-            if (serverMessage.type == "WEBSOCKET_CONNECTED"):
-                """The only thing in the payload should be success message"""
-                print(serverMessage.payload)
-
-            elif (serverMessage.type == "LOBBY_JOINED"):
-                """Here the payload has the lobbyState and the playerId"""
-                payload = LobbyJoinedPayload.model_validate(serverMessage.payload)
-                lobbyState = LobbyState.model_validate(payload.lobbyState)
-                CurrentLobbyStateHandler.playerId = payload.playerId
-
-                CurrentLobbyStateHandler.lobbyState = lobbyState
-
-            elif (serverMessage.type == "BUYSTAGE_STARTED"):
-                """Here the only thing in the payload is the lobbyState"""
-                payload = BuyStageStartedPayload.model_validate(serverMessage.payload)
-                CurrentLobbyStateHandler.lobbyState = LobbyState.model_validate(payload.lobbyState)
-
-            elif (serverMessage.type == "BATTLES_STARTED"):
-                """The payload will have the lobbyState and the battle this client is in"""
-                payload = BattlesStartedPayload.model_validate(serverMessage.payload)
+            if msgType == "WEBSOCKET_CONNECTED":
                 print(payload)
-                CurrentLobbyStateHandler.lobbyState = LobbyState.model_validate(payload.lobbyState)
-                CurrentBattleStateHandle.battle = BattleService.getBattleById(CurrentLobbyStateHandler.lobbyState.battles, payload.battleId)
 
-            elif (serverMessage.type == "RESULTSSTAGE_STARTED"):
-                """This just has the lobbyState"""
-                payload = ResultsStageStartedPayload.model_validate(serverMessage.payload)
-                CurrentLobbyStateHandler.lobbyState = LobbyState.model_validate(payload.lobbyState)
+            elif msgType == "LOBBY_JOINED":
+                CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
+                CurrentLobbyStateHandler.playerId = payload['playerId']
 
-            elif (serverMessage.type == "UPDATE"):
-                """This is just a simple lobbyState update"""
-                payload = LobbyState.model_validate(serverMessage.payload)
-                CurrentLobbyStateHandler.lobbyState = payload
+            elif msgType == "BUYSTAGE_STARTED":
+                CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
 
+            elif msgType == "BATTLES_STARTED":
+                print(payload)
+                CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
+                CurrentBattleStateHandle.battle = BattleService.getBattleById(
+                    CurrentLobbyStateHandler.lobbyState.battles, payload['battleId']
+                )
+
+            elif msgType == "RESULTSSTAGE_STARTED":
+                CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
+
+            elif msgType == "UPDATE":
+                CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload)
                 print("UPDATEEEDDDDD")
 
             else:
-                print("Type " + serverMessage.type + " was not recognized.")
-
-            self.latestUpdate = message
-
-            # Start listening again
-            self.recvTask = asyncio.create_task(self.websocket.recv())
-
-        except websockets.ConnectionClosed:
-            print("⚠️ WebSocket closed.")
-            self.recvTask = asyncio.create_task(self.websocket.recv())
-            return
+                print("Type " + msgType + " was not recognized.")
 
         except Exception as e:
-            print("Unexpected error:", e)
-            self.recvTask = asyncio.create_task(self.websocket.recv())
-            return
-        
+            print("Unexpected error: " + str(e))
 
 
 websocketConnection = WebsocketConnection()

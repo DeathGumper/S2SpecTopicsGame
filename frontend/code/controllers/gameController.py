@@ -6,8 +6,6 @@ Controller for communicating with the server regarding game actions.
 Ex: Player attack enemy creature.
 """
 import pygame
-
-import urllib.request
 from dto.clientMessage import ClientMessage
 from dto.clientPayloads.StartGamePayload import StartGamePayload
 from dto.clientPayloads.ReadyUpPayload import ReadyUpPayload

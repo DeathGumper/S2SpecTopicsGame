@@ -1,8 +1,9 @@
 from dataclasses import dataclass
-from pydantic import BaseModel
 
 from models.lobbyState import LobbyState
 
-class BattlesStartedPayload(BaseModel):
+
+@dataclass
+class BattlesStartedPayload:
     lobbyState: LobbyState
     battleId: str

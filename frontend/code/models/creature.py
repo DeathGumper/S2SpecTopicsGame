@@ -1,9 +1,18 @@
-from pydantic import BaseModel
+from dataclasses import dataclass
 
 from models.stats import Stats
 
 
-class Creature(BaseModel):
+@dataclass
+class Creature:
     name: str
     stats: Stats
     totalSpeed: float
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            name=d['name'],
+            stats=Stats.from_dict(d['stats']),
+            totalSpeed=d['totalSpeed'],
+        )

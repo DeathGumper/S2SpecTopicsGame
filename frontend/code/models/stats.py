@@ -1,6 +1,8 @@
-from pydantic import BaseModel
+from dataclasses import dataclass
 
-class Stats(BaseModel):
+
+@dataclass
+class Stats:
     maxHealth: float
     health: float
     strength: float
@@ -8,3 +10,15 @@ class Stats(BaseModel):
     dexterity: float
     speed: float
     accuracy: float
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls(
+            maxHealth=d['maxHealth'],
+            health=d['health'],
+            strength=d['strength'],
+            defense=d['defense'],
+            dexterity=d['dexterity'],
+            speed=d['speed'],
+            accuracy=d['accuracy'],
+        )
