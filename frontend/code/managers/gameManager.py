@@ -6,9 +6,12 @@ Manager for calling game related services based on server events.
 Ex: Calling Service due to server saying enemy creature attacked.
 """
 import pygame
+from controllers.actionController import actionController
 from controllers.gameController import gameController
 from controllers.lobbyController import lobbyController
+from models.battle import Battle
 from models.currentLobbyStateHandler import CurrentLobbyStateHandler
+from models.player import Player
 from services.sceneService import SceneService
 from visuals.gameObject import GameObject
 
@@ -31,6 +34,8 @@ class GameManager:
 
         lobbyState = CurrentLobbyStateHandler.lobbyState    
         player = None
+        opponent = None
+        battle = None
 
         if (lobbyState == None):
             return
@@ -43,6 +48,14 @@ class GameManager:
                 readyCounter += 1
             if p.id == CurrentLobbyStateHandler.playerId:
                 player = p
+
+        for b in lobbyState.battles:
+            if b.player1.id == player.id:
+                opponent = b.player2
+                battle = b
+            elif b.player2.id == player.id:
+                opponent = b.player1
+                battle = b
         
         if (lobbyState.stage == "LOBBY"):
             if (self.sceneService.currentScene.name != "lobby"):
@@ -72,10 +85,19 @@ class GameManager:
         if (lobbyState.stage == "BATTLESTAGE"):
             if (self.sceneService.currentScene.name != "battlestage"):
                 self.sceneService.switchScene("battlestage")
+                
+            self.updateBattleStage(player, opponent)
 
         if (lobbyState.stage == "RESULTSSTAGE"):
             if (self.sceneService.currentScene.name != "resultsstage"):
                 self.sceneService.switchScene("resultsstage")
+
+    def updateBattleStage(self, player: Player, opponent: Player):
+        currentScene = self.sceneService.currentScene
+        currentScene.getGameObjectByName("friendlycreature").setNewText(player.creatures[player.activeCreatureIndex].name + "\nHP: " + str(player.creatures[player.activeCreatureIndex].stats.health))
+        currentScene.getGameObjectByName("enemyCreature").setNewText(opponent.creatures[opponent.activeCreatureIndex].name + "\nHP: " + str(opponent.creatures[opponent.activeCreatureIndex].stats.health))
+
+        actionController.setActions(list(player.creatures[player.activeCreatureIndex].abilities.values()))
 
     def render(self, surface: pygame.Surface):
         self.sceneService.render(surface)

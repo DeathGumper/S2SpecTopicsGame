@@ -8,6 +8,8 @@ import com.spectopics.s2game.models.Player;
 
 public class ActionService {
     public static boolean CallAction(Battle battle, String act) {
+        System.out.println("Calling action by " + (battle.getState() == BattleState.PLAYER1 ? battle.getPlayer1().getName() : battle.getPlayer2().getName()) + ": " + act + " for battle: " + battle.getPlayer1().getName() + " vs " + battle.getPlayer2().getName());
+
         String[] parts = act.split("-");
         try {
             return ActionService.class.getMethod(parts[0],Battle.class, String.class).invoke(null,battle,act);
