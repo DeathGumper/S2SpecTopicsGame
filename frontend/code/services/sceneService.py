@@ -5,6 +5,8 @@ from models.scene import Scene
 
 from controllers.lobbyController import lobbyController
 
+from controllers.actionController import actionController
+
 class SceneService:
     scenes = []
     currentScene = None
@@ -89,6 +91,12 @@ class SceneService:
 
         battlestageScene.makeActionButton("End Battles!", lambda: asyncio.create_task(gameController.endBattleStage()), (100, 400))
 
+        battlestageScene.makeActionButton("Attack 1", lambda: asyncio.create_task(actionController.callActionByIndex(0)), (0, 300))
+        battlestageScene.makeActionButton("Attack 2", lambda: asyncio.create_task(actionController.callActionByIndex(1)), (0, 400))
+        battlestageScene.makeActionButton("Attack 3", lambda: asyncio.create_task(actionController.callActionByIndex(2)), (0, 500))
+
+
+        # temporary button that calls the kill creature action for testing
         battlestageScene.makeActionButton("Kill Enemy Creature", lambda: asyncio.create_task(gameController.callAction("KillCreature")), (400, 400))
 
     def resultsstageSetup(self):

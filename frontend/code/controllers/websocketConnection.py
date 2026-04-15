@@ -101,7 +101,6 @@ class WebsocketConnection:
 
             elif msgType == "UPDATE":
                 CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload)
-                print("UPDATEEEDDDDD")
 
             else:
                 print("Type " + msgType + " was not recognized.")

@@ -8,5 +8,8 @@
         "dexterity": 7000,
         "speed": 6500,
         "accuracy": 9000
+    },
+    "abilities": {
+        "Claw": "DamageEnemy-100"
     }
 }

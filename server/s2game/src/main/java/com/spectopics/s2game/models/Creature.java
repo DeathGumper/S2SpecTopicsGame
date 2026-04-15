@@ -1,12 +1,15 @@
 package com.spectopics.s2game.models;
  
  
+import java.util.Map;
+
 import lombok.Data;
  
 @Data
 public class Creature {
     private String name;
     private Stats stats;
+    private Map<String, String> abilities;
     private float totalSpeed;
  
     public float addTotalSpeed(float speed) {
@@ -18,8 +21,6 @@ public class Creature {
         this.totalSpeed = 0;
         addTotalSpeed(this.stats.getSpeed());
     }
- 
- 
  
  
  
