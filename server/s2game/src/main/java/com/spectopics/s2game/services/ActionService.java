@@ -12,7 +12,8 @@ public class ActionService {
 
         String[] parts = act.split("-");
         try {
-            return ActionService.class.getMethod(parts[0],Battle.class, String.class).invoke(null,battle,act);
+            boolean status = (boolean) ActionService.class.getMethod(parts[0],Battle.class, String.class).invoke(null,battle,act);
+            return status;
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             System.out.println("Error: " + e);
             return false;
@@ -20,12 +21,12 @@ public class ActionService {
     }
 
     public static boolean KillCreature(Battle battle, String act) {
-        if (battle.GetBattleState() == BattleState.PLAYER1) {
+        if (battle.getState() == BattleState.PLAYER1) {
             battle.NextP2Creature();
             battle.NextTurn();
         }
 
-        else if (battle.GetBattleState() == BattleState.PLAYER2) {
+        else if (battle.getState() == BattleState.PLAYER2) {
             battle.NextP1Creature();
             battle.NextTurn();
         }
@@ -34,36 +35,41 @@ public class ActionService {
 
     public static boolean DamageEnemy(Battle battle, String act) {
         //Get Player
-        Player currentPlayer;
-        Player enemyPlayer;
-        if (battle.GetBattleState() == BattleState.PLAYER1) {
-            currentPlayer = battle.GetPlayer1();
-            enemyPlayer = battle.GetPlayer2();
-        } else if (battle.GetBattleState() == BattleState.PLAYER2) {
-            currentPlayer = battle.GetPlayer2();
-            enemyPlayer = battle.GetPlayer1();
+        Player currentPlayer = null;
+        Player enemyPlayer = null;
+        if (battle.getState() == BattleState.PLAYER1) {
+            currentPlayer = battle.getPlayer1();
+            enemyPlayer = battle.getPlayer2();
+        } else if (battle.getState() == BattleState.PLAYER2) {
+            currentPlayer = battle.getPlayer2();
+            enemyPlayer = battle.getPlayer1();
+        }
+
+        if (currentPlayer == null || enemyPlayer == null) {
+            System.out.println("Error: One of the players is null");
+            return false;
         }
 
         //Damage Calculation
         float movePow = Float.parseFloat(act.split("-")[1]);
-        float userAtk = currentPlayer.GetActiveCreature().GetStats().getStrength();
-        float enemyDef = enemyPlayer.GetActiveCreature().GetStats().getDefense();
+        float userAtk = currentPlayer.GetActiveCreature().getStats().getStrength();
+        float enemyDef = enemyPlayer.GetActiveCreature().getStats().getDefense();
         float crit;
         if ((int) (Math.random() * 24) == 0) {
-            crit = 1.5;
+            crit = 1.5f;
         } else {
-            crit = 1;
+            crit = 1.0f;
         }
-        float rand = ((int) (Math.random() * 15) + 86) * 0.01;
+        float rand = ((int) (Math.random() * 15) + 86) * 0.01f;
 
         float dmg = (((22 * movePow * userAtk / enemyDef) / 50) + 2) * crit * rand;
-        enemyPlayer.GetActiveCreature().GetStats().AdjustHealth(-dmg);
+        enemyPlayer.GetActiveCreature().getStats().AdjustHealth(-dmg);
 
-        if (enemyPlayer.GetActiveCreature().GetStats().getHealth() <= 0) {
-            if (battle.GetBattleState() == BattleState.PLAYER1) {
+        if (enemyPlayer.GetActiveCreature().getStats().getHealth() <= 0) {
+            if (battle.getState() == BattleState.PLAYER1) {
                 battle.NextP2Creature();
                 battle.NextTurn();
-            } else if (battle.GetBattleState() == BattleState.PLAYER2) {
+            } else if (battle.getState() == BattleState.PLAYER2) {
                 battle.NextP1Creature();
                 battle.NextTurn();
             }

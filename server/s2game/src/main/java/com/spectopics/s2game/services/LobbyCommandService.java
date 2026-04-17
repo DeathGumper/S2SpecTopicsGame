@@ -99,6 +99,7 @@ public class LobbyCommandService {
         LobbyState lobby = LobbyService.GetLobbyByPlayerId(player.getId());
         Battle battle = BattleService.getBattleByPlayerId(lobby.getBattles(), player.getId());
 
+        System.out.println("Player " + player.getName() + " has called action: " + payload.action);
         ActionService.CallAction(battle, payload.action);
 
         gameEventService.sendLobbyStateToClients(LobbyService.GetLobbyByPlayerId(player.getId()));

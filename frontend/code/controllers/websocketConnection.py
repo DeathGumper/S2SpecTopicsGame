@@ -74,39 +74,38 @@ class WebsocketConnection:
             message = self._recvTask.result()
             self._recvTask = asyncio.create_task(self.websocket.recv())
 
-        try:
-            jsonMessage = json.loads(message)
-            msgType = jsonMessage['type']
-            payload = jsonMessage.get('payload')
+        
+        jsonMessage = json.loads(message)
+        msgType = jsonMessage['type']
+        payload = jsonMessage.get('payload')
 
-            if msgType == "WEBSOCKET_CONNECTED":
-                print(payload)
+        if msgType == "WEBSOCKET_CONNECTED":
+            print(payload)
 
-            elif msgType == "LOBBY_JOINED":
-                CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
-                CurrentLobbyStateHandler.playerId = payload['playerId']
+        elif msgType == "LOBBY_JOINED":
+            CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
+            CurrentLobbyStateHandler.playerId = payload['playerId']
 
-            elif msgType == "BUYSTAGE_STARTED":
-                CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
+        elif msgType == "BUYSTAGE_STARTED":
+            CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
 
-            elif msgType == "BATTLES_STARTED":
-                print(payload)
-                CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
-                CurrentBattleStateHandle.battle = BattleService.getBattleById(
-                    CurrentLobbyStateHandler.lobbyState.battles, payload['battleId']
-                )
+        elif msgType == "BATTLES_STARTED":
+            print(payload)
+            CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
+            CurrentBattleStateHandle.battle = BattleService.getBattleById(
+                CurrentLobbyStateHandler.lobbyState.battles, payload['battleId']
+            )
 
-            elif msgType == "RESULTSSTAGE_STARTED":
-                CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
+        elif msgType == "RESULTSSTAGE_STARTED":
+            CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
 
-            elif msgType == "UPDATE":
-                CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload)
+        elif msgType == "UPDATE":
+            CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload)
 
-            else:
-                print("Type " + msgType + " was not recognized.")
+        else:
+            print("Type " + msgType + " was not recognized.")
 
-        except Exception as e:
-            print("Unexpected error: " + str(e))
+        
 
 
 websocketConnection = WebsocketConnection()

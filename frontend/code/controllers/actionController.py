@@ -24,6 +24,7 @@ class ActionController:
 
     def setActions(self, actions: list[str]):
         self.actions = actions
+        print("Set actions: " + str(actions))
         
     async def callActionByIndex(self, index: int):
         print("Actions: " + str(self.actions))
