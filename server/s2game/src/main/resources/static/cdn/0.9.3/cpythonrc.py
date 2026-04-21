@@ -680,23 +680,27 @@ ________________________
         import aio.pep0723
         from aio.pep0723 import Config
 
+        # prevent external package fetches — game uses only built-in modules
+        async def _noop_check_list(code):
+            return []
+        aio.pep0723.check_list = _noop_check_list
+
+        async def _noop_pip_install(dep):
+            pass
+        aio.pep0723.pip_install = _noop_pip_install
+
+        platform.window.console.log(f"[pygbag] preload_code: PKG_INDEXES={Config.PKG_INDEXES}, REPO_DATA={Config.REPO_DATA}")
+
         if not aio.cross.simulator:
             # env path is set by pep0723
             sconf = __import__("sysconfig").get_paths()
             env = Path(sconf["purelib"])
 
             if not len(Config.repos):
-                await aio.pep0723.async_repos()
-
-    # TODO switch to METADATA:Requires-Dist
-    #   see https://github.com/pygame-web/pygbag/issues/156
-
-                for cdn in Config.PKG_INDEXES:
-                    async with platform.fopen(Path(cdn) / Config.REPO_DATA) as source:
-                        Config.repos.append(json.loads(source.read()))
-
-                DBG("650: FIXME (this is pyodide maintened stuff, use (auto)PEP723 asap)")
+                # no external fetch needed — game uses only built-in pygame modules
+                Config.repos.append({"packages": {}})
                 print("651: referenced packages :", len(Config.repos[0]["packages"]))
+                platform.window.console.log("[pygbag] preload_code: repos initialized locally")
 
             DBG(f"654: aio.pep0723.check_list {aio.pep0723.env=}")
             deps = await aio.pep0723.check_list(code)
@@ -1065,13 +1069,11 @@ if not aio.cross.simulator:
         else:
             PyConfig.pygbag = 0
 
-        if (PyConfig.dev_mode > 0) or PyConfig.pygbag:
-            # in pygbag dev mode use local repo
-            PyConfig.pkg_indexes = []
-            for idx in PYCONFIG_PKG_INDEXES_DEV:
-                redirect = idx.replace("<port>", port)
-                PyConfig.pkg_indexes.append(redirect)
+        # always use this server's own archives to avoid external fetches
+        origin = str(platform.window.location.origin)
+        PyConfig.pkg_indexes = [origin + "/archives/repo/"]
 
+        if (PyConfig.dev_mode > 0) or PyConfig.pygbag:
             print("807: DEV MODE ON", PyConfig.pkg_indexes)
 # now in pep0723
 #        else:

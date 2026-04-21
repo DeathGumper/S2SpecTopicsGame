@@ -40,18 +40,24 @@ class WebsocketConnection:
             print("Failed to send message: " + str(e))
 
     async def connectWebsocket(self):
-        uri = "ws://localhost:8080/websocket"
-        if not TESTING.get():
-            uri = SERVER_URL + "/websocket"
         try:
             if IN_BROWSER:
                 import platform
+                hostname = str(platform.window.location.hostname)
+                port = str(platform.window.location.port)
+                if hostname in ("localhost", "127.0.0.1"):
+                    uri = f"ws://{hostname}:{port}/websocket"
+                else:
+                    uri = SERVER_URL + "/websocket"
                 self.websocket = platform.window.WebSocket.new(uri)
                 self.websocket.onopen = lambda e: print("Connected to server websocket.")
                 self.websocket.onmessage = lambda e: self._queue.append(str(e.data))
                 self.websocket.onclose = lambda e: print("WebSocket closed.")
                 self.websocket.onerror = lambda e: print("WebSocket error.")
             else:
+                uri = "ws://localhost:8080/websocket"
+                if not TESTING.get():
+                    uri = SERVER_URL + "/websocket"
                 self.websocket = await websockets.connect(uri)
                 self._recvTask = asyncio.create_task(self.websocket.recv())
                 print("Connected to server websocket.")
