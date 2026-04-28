@@ -10,6 +10,7 @@
         "accuracy": 9000
     },
     "abilities": {
-        "Claw": "DamageEnemy-100"
+        "Claw": "DamageEnemy-1200",
+        "Heal": "Heal-1000|Stun-10"
     }
 }

@@ -3,6 +3,8 @@ package com.spectopics.s2game.models;
 import org.springframework.web.socket.WebSocketSession;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.spectopics.s2game.enums.BattleState;
 
 import lombok.Data;
 
@@ -10,12 +12,22 @@ import lombok.Data;
 public class Player {
     private String name;
     private String id;
+    private int lives;
     private Creature[] creatures;
     private int activeCreatureIndex;
     private boolean ready;
     private boolean owner = false;
+    private BattleState battleState;
+
     @JsonIgnore
     private WebSocketSession session;
+    @JsonIgnore
+    private Player opponent;
+
+    @JsonProperty("opponentId")
+    public String getOpponentId() {
+        return opponent != null ? opponent.getId() : null;
+    }
 
     public Player(String name, WebSocketSession session) {
         this.name = name;
@@ -23,6 +35,8 @@ public class Player {
         this.session = session;
         this.creatures = new Creature[5];
         activeCreatureIndex = 0;
+        this.lives = 3;
+        this.ready = false;
     }
 
     public boolean NextCreature() {
@@ -30,7 +44,9 @@ public class Player {
     }
 
     public boolean SetActiveCreature(int index) {
-        if (index > creatures.length)
+        if (index >= creatures.length)
+            return false;
+        if (creatures[index] == null)
             return false;
         activeCreatureIndex = index;
         System.out.println(index);

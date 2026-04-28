@@ -6,9 +6,15 @@ import org.springframework.web.socket.WebSocketSession;
 
 import com.spectopics.s2game.websocket.listenerTransferObjects.BattlesStartedEvent;
 import com.spectopics.s2game.websocket.listenerTransferObjects.BuyStageStartedEvent;
+import com.spectopics.s2game.websocket.listenerTransferObjects.CreatureBurnedEvent;
+import com.spectopics.s2game.websocket.listenerTransferObjects.StatusAppliedEvent;
 import com.spectopics.s2game.websocket.listenerTransferObjects.LobbyJoinedEvent;
+import com.spectopics.s2game.websocket.listenerTransferObjects.LobbyOwnerDisconnected;
 import com.spectopics.s2game.websocket.listenerTransferObjects.ResultsStageStartedEvent;
+import com.spectopics.s2game.enums.StatusNames;
+import com.spectopics.s2game.models.Creature;
 import com.spectopics.s2game.models.LobbyState;
+import com.spectopics.s2game.models.Player;
 
 @Service
 public class GameEventService {
@@ -28,6 +34,10 @@ public class GameEventService {
         publisher.publishEvent(new LobbyJoinedEvent(lobby, session, playerId));
     }
 
+    public void ownerDisconnected(LobbyState lobby) throws Exception {
+        publisher.publishEvent(new LobbyOwnerDisconnected(lobby));
+    }
+
     public void battlesStarted(LobbyState lobby) {
         publisher.publishEvent(new BattlesStartedEvent(lobby));
     }
@@ -39,4 +49,21 @@ public class GameEventService {
     public void sendLobbyStateToClients(LobbyState lobby) {
         publisher.publishEvent(lobby);
     }
+
+    public void creatureBurned(Player player, Creature creature, float damage) {
+        publisher.publishEvent(new CreatureBurnedEvent(player, creature, damage));
+    }
+
+    public void creaturePoisoned(Player player, Creature creature) {
+        publisher.publishEvent(new StatusAppliedEvent(player, creature, StatusNames.POISONED));
+    }
+
+    public void creatureIgnited(Player player, Creature creature) {
+        publisher.publishEvent(new StatusAppliedEvent(player, creature, StatusNames.IGNITED));
+    }
+
+    public void creatureStunned(Player player, Creature creature) {
+        publisher.publishEvent(new StatusAppliedEvent(player, creature, StatusNames.STUNNED));
+    }
+
 }

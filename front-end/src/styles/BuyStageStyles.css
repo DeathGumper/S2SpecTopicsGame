@@ -1,0 +1,5 @@
+#buy-stage #creature-display {
+    display: flex;
+    justify-content: center;
+    gap: 2vh;
+}

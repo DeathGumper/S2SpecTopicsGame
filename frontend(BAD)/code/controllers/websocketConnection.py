@@ -40,18 +40,24 @@ class WebsocketConnection:
             print("Failed to send message: " + str(e))
 
     async def connectWebsocket(self):
-        uri = "ws://localhost:8080/websocket"
-        if not TESTING.get():
-            uri = SERVER_URL + "/websocket"
         try:
             if IN_BROWSER:
                 import platform
+                hostname = str(platform.window.location.hostname)
+                port = str(platform.window.location.port)
+                if hostname in ("localhost", "127.0.0.1"):
+                    uri = f"ws://{hostname}:{port}/websocket"
+                else:
+                    uri = SERVER_URL + "/websocket"
                 self.websocket = platform.window.WebSocket.new(uri)
                 self.websocket.onopen = lambda e: print("Connected to server websocket.")
                 self.websocket.onmessage = lambda e: self._queue.append(str(e.data))
                 self.websocket.onclose = lambda e: print("WebSocket closed.")
                 self.websocket.onerror = lambda e: print("WebSocket error.")
             else:
+                uri = "ws://localhost:8080/websocket"
+                if not TESTING.get():
+                    uri = SERVER_URL + "/websocket"
                 self.websocket = await websockets.connect(uri)
                 self._recvTask = asyncio.create_task(self.websocket.recv())
                 print("Connected to server websocket.")
@@ -74,39 +80,38 @@ class WebsocketConnection:
             message = self._recvTask.result()
             self._recvTask = asyncio.create_task(self.websocket.recv())
 
-        try:
-            jsonMessage = json.loads(message)
-            msgType = jsonMessage['type']
-            payload = jsonMessage.get('payload')
+        
+        jsonMessage = json.loads(message)
+        msgType = jsonMessage['type']
+        payload = jsonMessage.get('payload')
 
-            if msgType == "WEBSOCKET_CONNECTED":
-                print(payload)
+        if msgType == "WEBSOCKET_CONNECTED":
+            print(payload)
 
-            elif msgType == "LOBBY_JOINED":
-                CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
-                CurrentLobbyStateHandler.playerId = payload['playerId']
+        elif msgType == "LOBBY_JOINED":
+            CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
+            CurrentLobbyStateHandler.playerId = payload['playerId']
 
-            elif msgType == "BUYSTAGE_STARTED":
-                CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
+        elif msgType == "BUYSTAGE_STARTED":
+            CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
 
-            elif msgType == "BATTLES_STARTED":
-                print(payload)
-                CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
-                CurrentBattleStateHandle.battle = BattleService.getBattleById(
-                    CurrentLobbyStateHandler.lobbyState.battles, payload['battleId']
-                )
+        elif msgType == "BATTLES_STARTED":
+            print(payload)
+            CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
+            CurrentBattleStateHandle.battle = BattleService.getBattleById(
+                CurrentLobbyStateHandler.lobbyState.battles, payload['battleId']
+            )
 
-            elif msgType == "RESULTSSTAGE_STARTED":
-                CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
+        elif msgType == "RESULTSSTAGE_STARTED":
+            CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload['lobbyState'])
 
-            elif msgType == "UPDATE":
-                CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload)
+        elif msgType == "UPDATE":
+            CurrentLobbyStateHandler.lobbyState = LobbyState.from_dict(payload)
 
-            else:
-                print("Type " + msgType + " was not recognized.")
+        else:
+            print("Type " + msgType + " was not recognized.")
 
-        except Exception as e:
-            print("Unexpected error: " + str(e))
+        
 
 
 websocketConnection = WebsocketConnection()

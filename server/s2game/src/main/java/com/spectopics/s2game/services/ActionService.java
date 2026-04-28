@@ -2,72 +2,128 @@ package com.spectopics.s2game.services;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.springframework.stereotype.Service;
+
 import com.spectopics.s2game.enums.BattleState;
-import com.spectopics.s2game.models.Battle;
 import com.spectopics.s2game.models.Player;
 
+@Service
 public class ActionService {
-    public static boolean CallAction(Battle battle, String act) {
-        System.out.println("Calling action by " + (battle.getState() == BattleState.PLAYER1 ? battle.getPlayer1().getName() : battle.getPlayer2().getName()) + ": " + act + " for battle: " + battle.getPlayer1().getName() + " vs " + battle.getPlayer2().getName());
 
-        String[] parts = act.split("-");
-        try {
-            return ActionService.class.getMethod(parts[0],Battle.class, String.class).invoke(null,battle,act);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            System.out.println("Error: " + e);
-            return false;
-        }
+    private final BattleService battleService;
+    private final GameEventService gameEventService;
+
+    // Constructor injection (recommended)
+    public ActionService(BattleService battleService, GameEventService gameEventService) {
+        this.battleService = battleService;
+        this.gameEventService = gameEventService;
     }
 
-    public static boolean KillCreature(Battle battle, String act) {
-        if (battle.GetBattleState() == BattleState.PLAYER1) {
-            battle.NextP2Creature();
-            battle.NextTurn();
+    public boolean CallAction(Player player, String act) {
+        System.out.println("Calling action by " + player.getName() + ": " + act + " vs " + player.getOpponent().getName());
+
+        if (player.getBattleState() != BattleState.MY_TURN) {
+            System.out.println("Error: Not player's turn");
+            return false;
         }
 
-        else if (battle.GetBattleState() == BattleState.PLAYER2) {
-            battle.NextP1Creature();
-            battle.NextTurn();
+        String[] actions = act.split("\\|");
+        if (actions.length == 0) {
+            actions = new String[]{act};
         }
+
+        for (String action : actions) {
+            String[] parts = action.split("-");
+            try {
+                boolean status = (boolean) this.getClass()
+                        .getMethod(parts[0], Player.class, String.class)
+                        .invoke(this, player, action);
+
+                if (!status) {
+                    System.out.println("Error: Action " + parts[0] + " failed");
+                    return false;
+                }
+
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                System.out.println("Error: " + e);
+                return false;
+            }
+        }
+
+        battleService.NextTurn(player);
         return true;
     }
 
-    public static boolean DamageEnemy(Battle battle, String act) {
-        //Get Player
-        Player currentPlayer;
-        Player enemyPlayer;
-        if (battle.GetBattleState() == BattleState.PLAYER1) {
-            currentPlayer = battle.GetPlayer1();
-            enemyPlayer = battle.GetPlayer2();
-        } else if (battle.GetBattleState() == BattleState.PLAYER2) {
-            currentPlayer = battle.GetPlayer2();
-            enemyPlayer = battle.GetPlayer1();
+    public boolean DamageEnemy(Player player, String act) {
+        Player opponent = player.getOpponent();
+
+        if (opponent == null) {
+            System.out.println("Error: opponent is null");
+            return false;
         }
 
-        //Damage Calculation
         float movePow = Float.parseFloat(act.split("-")[1]);
-        float userAtk = currentPlayer.GetActiveCreature().GetStats().getStrength();
-        float enemyDef = enemyPlayer.GetActiveCreature().GetStats().getDefense();
-        float crit;
-        if ((int) (Math.random() * 24) == 0) {
-            crit = 1.5;
-        } else {
-            crit = 1;
-        }
-        float rand = ((int) (Math.random() * 15) + 86) * 0.01;
+        float userAtk = player.GetActiveCreature().getStats().getStrength();
+        float enemyDef = opponent.GetActiveCreature().getStats().getDefense();
 
-        float dmg = (((22 * movePow * userAtk / enemyDef) / 50) + 2) * crit * rand;
-        enemyPlayer.GetActiveCreature().GetStats().AdjustHealth(-dmg);
+        float crit = ((int) (Math.random() * 24) == 0) ? 1.5f : 1.0f;
+        float rand = ((int) (Math.random() * 15) + 86) * 0.01f;
 
-        if (enemyPlayer.GetActiveCreature().GetStats().getHealth() <= 0) {
-            if (battle.GetBattleState() == BattleState.PLAYER1) {
-                battle.NextP2Creature();
-                battle.NextTurn();
-            } else if (battle.GetBattleState() == BattleState.PLAYER2) {
-                battle.NextP1Creature();
-                battle.NextTurn();
-            }
-        }
+        float poisonMultiplier = opponent.GetActiveCreature().getPoisonDamageMultiplier();
+
+        float dmg = (((22 * movePow * userAtk / enemyDef) / 50) + 2) * crit * rand * poisonMultiplier;
+        opponent.GetActiveCreature().getStats().AdjustHealth(-dmg);
+
+        return true;
+    }
+
+    public boolean Heal(Player player, String act) {
+        float healAmount = Float.parseFloat(act.split("-")[1]);
+        player.GetActiveCreature().getStats().AdjustHealth(healAmount);
+        return true;
+    }
+
+    public boolean Stun(Player player, String act) {
+        Player opponent = player.getOpponent();
+        if (opponent == null) return false;
+
+        float effectPower = Float.parseFloat(act.split("-")[1]);
+
+        opponent.GetActiveCreature().getStats().setStun(
+            opponent.GetActiveCreature().getStats().getStun() + effectPower
+        );
+        
+        this.gameEventService.creatureStunned(player, opponent.GetActiveCreature());
+
+        return true;
+    }
+
+    public boolean Ignite(Player player, String act) {
+        Player opponent = player.getOpponent();
+        if (opponent == null) return false;
+
+        float effectPower = Float.parseFloat(act.split("-")[1]);
+
+        opponent.GetActiveCreature().getStats().setBurn(
+            opponent.GetActiveCreature().getStats().getBurn() + effectPower
+        );
+
+        this.gameEventService.creatureIgnited(player, opponent.GetActiveCreature());
+
+        return true;
+    }
+
+    public boolean Poison(Player player, String act) {
+        Player opponent = player.getOpponent();
+        if (opponent == null) return false;
+
+        float effectPower = Float.parseFloat(act.split("-")[1]);
+
+        opponent.GetActiveCreature().getStats().setPoison(
+            opponent.GetActiveCreature().getStats().getPoison() + effectPower
+        );
+
+
 
         return true;
     }

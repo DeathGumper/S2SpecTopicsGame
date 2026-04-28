@@ -17,9 +17,7 @@ import com.spectopics.s2game.dto.clientPayloads.JoinLobbyPayload;
 import com.spectopics.s2game.dto.clientPayloads.ReadyUpPayload;
 import com.spectopics.s2game.dto.clientPayloads.StartGamePayload;
 import com.spectopics.s2game.models.LobbyState;
-import com.spectopics.s2game.models.Player;
 import com.spectopics.s2game.services.LobbyCommandService;
-import com.spectopics.s2game.services.PlayerService;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
@@ -73,10 +71,9 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
         // Removing the connection info from the list
         webSocketSessions.remove(session);
         
-        // Remove the session from the player that disconnected
-        Player playerDisconnected = PlayerService.GetPlayerBySession(session);
-        if (playerDisconnected == null) return;
-        PlayerService.RemovePlayer(playerDisconnected);
+        lobbyCommandService.handlePlayerDisconnect(session);
+
+        
     }
 
     @Override

@@ -10,18 +10,47 @@ public class GameUpdaterService {
     private LobbyState lobbyState;
 
     private GameEventService gameEventService;
+    private BattleService battleService;
 
     public GameUpdaterService() {
-        gameEventService = SpringContext.getBean(GameEventService.class);
+        
+        this.battleService = SpringContext.getBean(BattleService.class);
+        this.gameEventService = SpringContext.getBean(GameEventService.class);
     }
 
     // Called 30 times per second
     private void Update(long nanosSinceLastFrame) {
         double timeSinceLastFrame = nanosSinceLastFrame/1_000_000_000.0;
 
+        // boolean ownerDisconnected = true;
+        // for (Player player : lobbyState.getPlayers()) {
+        //     if (player.isOwner()) {
+        //         ownerDisconnected = false;
+        //         break;
+        //     }
+        // }
+
+        if (lobbyState.getPlayers().size() == 0) {
+            StopUpdating();
+            return;
+        }
+
+        // if (ownerDisconnected) {
+        //     System.out.println("Lobby owner disconnected, killing lobby...");
+        //     StopUpdating();
+        //     try {
+        //         gameEventService.ownerDisconnected(lobbyState);
+        //     } catch (Exception e) {
+        //         e.printStackTrace();
+        //     }
+        //     return;
+        // }
+        
+
         // If we are in the GameStage or BuyStage or ResultsStage then we subtract the timer.
-        if (this.lobbyState.getStage() != StageState.LOBBY) {
-            this.lobbyState.setStageTimer((float) (this.lobbyState.getStageTimer() - timeSinceLastFrame)); // Subtract the amount of time since the last frame
+        if (this.lobbyState.getStage() != StageState.LOBBY &&
+            this.lobbyState.getStage() != StageState.BATTLESTAGE) {
+            this.lobbyState.setStageTimer((float) (this.lobbyState.getStageTimer() - timeSinceLastFrame));
         }
 
         if (this.lobbyState.getStage() == StageState.BUYSTAGE) {
@@ -36,7 +65,7 @@ public class GameUpdaterService {
             if (allReady || this.lobbyState.getStageTimer() <= 0) {
                 System.out.println("All players ready, starting battle stage!");
                 LobbyStageService.GoToBattleStage(this.lobbyState);
-                this.lobbyState.setBattles(BattleService.MakeBattles(this.lobbyState));
+                this.battleService.AssignOpponents(this.lobbyState);
                 try {
                     gameEventService.battlesStarted(this.lobbyState);
                 } catch (Exception e) {
@@ -46,12 +75,11 @@ public class GameUpdaterService {
         }
 
         if (this.lobbyState.getStage() == StageState.BATTLESTAGE) {
-            // Temporary, this accounts for only 1 battle ongoing at a time
-            if (this.lobbyState.getBattles().get(0).isBattleDone()) {
+            if (this.battleService.checkAllBattlesDone(this.lobbyState)) {
                 System.out.println("The battle stage is over!");
                 LobbyStageService.EndBattleStage(this.lobbyState);
+                gameEventService.resultsStageStarted(this.lobbyState);
             }
-
         }
 
         if (this.lobbyState.getStage() == StageState.RESULTSSTAGE) {
@@ -64,19 +92,14 @@ public class GameUpdaterService {
                 }
             }
         }
-
-        System.out.println(this.lobbyState.getStageTimer() + " players: " + lobbyState.getPlayers().size());
-
-
-        if (lobbyState.getPlayers().size() == 0) {
-            StopUpdating();
-        }
     }
     
     public void StopUpdating() {
         stillUpdating = false;
         if (this.updater != null && this.updater.isAlive()) {
             this.updater.interrupt(); // Interrupt sleep if any
+
+            LobbyService.KillLobby(lobbyState);
         }
     }
 

@@ -2,20 +2,23 @@ package com.spectopics.s2game.websocket.listeners;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.WebSocketSession;
 
 import com.spectopics.s2game.dto.serverPayloads.BattlesStartedPayload;
 import com.spectopics.s2game.dto.serverPayloads.BuyStageStartedPayload;
+import com.spectopics.s2game.dto.serverPayloads.CreatureBurnedPayload;
+import com.spectopics.s2game.dto.serverPayloads.CreatureStatusAppliedPayload;
 import com.spectopics.s2game.dto.serverPayloads.LobbyJoinedPayload;
 import com.spectopics.s2game.dto.serverPayloads.ResultsStageStartedPayload;
 import com.spectopics.s2game.models.LobbyState;
 import com.spectopics.s2game.models.Player;
-import com.spectopics.s2game.services.BattleService;
 import com.spectopics.s2game.websocket.handlers.SocketConnectionHandler;
 import com.spectopics.s2game.websocket.listenerTransferObjects.BattlesStartedEvent;
 import com.spectopics.s2game.websocket.listenerTransferObjects.BuyStageStartedEvent;
+import com.spectopics.s2game.websocket.listenerTransferObjects.CreatureBurnedEvent;
 import com.spectopics.s2game.websocket.listenerTransferObjects.LobbyJoinedEvent;
+import com.spectopics.s2game.websocket.listenerTransferObjects.LobbyOwnerDisconnected;
 import com.spectopics.s2game.websocket.listenerTransferObjects.ResultsStageStartedEvent;
+import com.spectopics.s2game.websocket.listenerTransferObjects.StatusAppliedEvent;
 
 @Component
 public class SocketEventListener {
@@ -43,20 +46,32 @@ public class SocketEventListener {
             "LOBBY_JOINED",
             new LobbyJoinedPayload(event.lobby, event.playerId)
         );
+
+        socketHandler.broadcastToLobby(
+            event.lobby,
+            "UPDATE",
+            event.lobby
+        );
     }
 
     @EventListener
     public void handleBattlesStarted(BattlesStartedEvent event) throws Exception {
         for (Player player : event.lobbyState.getPlayers()) {
-            WebSocketSession session = player.getSession();
-            String battleId = BattleService.getBattleByPlayerId(event.lobbyState.getBattles(), session.getId()).getId();
             socketHandler.broadcastToIndividual(
-                session, 
-                "BATTLES_STARTED", 
-                new BattlesStartedPayload(event.lobbyState, battleId)
+                player.getSession(),
+                "BATTLES_STARTED",
+                new BattlesStartedPayload(event.lobbyState)
             );
-
         }
+    }
+
+    @EventListener
+    public void handleLobbyOwnerDisconnected(LobbyOwnerDisconnected event) throws Exception {
+        socketHandler.broadcastToLobby(
+            event.lobbyState,
+            "OWNER_DISCONNECTED",
+            event.lobbyState
+        );
     }
 
     @EventListener
@@ -75,6 +90,34 @@ public class SocketEventListener {
             lobby, 
             "UPDATE", 
             lobby
+        );
+    }
+
+    @EventListener
+    public void handleCreatureBurned(CreatureBurnedEvent payload) throws Exception {
+        socketHandler.broadcastToIndividual(
+            payload.player.getOpponent().getSession(), 
+            "CREATURE_BURNED",
+            new CreatureBurnedPayload(payload.creature, payload.damage)
+        );
+        socketHandler.broadcastToIndividual(
+            payload.player.getSession(),
+            "CREATURE_BURNED",
+            new CreatureBurnedPayload(payload.creature, payload.damage)
+        );
+    }
+
+    @EventListener
+    public void handleCreatureStatusEffectApplied(StatusAppliedEvent payload) throws Exception {
+        socketHandler.broadcastToIndividual(
+            payload.player.getOpponent().getSession(), 
+            "CREATURE_STATUS_APPLIED",
+            new CreatureStatusAppliedPayload(payload.creature, payload.statusName)
+        );
+        socketHandler.broadcastToIndividual(
+            payload.player.getSession(),
+            "CREATURE_STATUS_APPLIED",
+            new CreatureStatusAppliedPayload(payload.creature, payload.statusName)
         );
     }
 }

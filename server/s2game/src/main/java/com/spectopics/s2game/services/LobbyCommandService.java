@@ -8,7 +8,6 @@ import com.spectopics.s2game.dto.clientPayloads.CreateLobbyPayload;
 import com.spectopics.s2game.dto.clientPayloads.JoinLobbyPayload;
 import com.spectopics.s2game.dto.clientPayloads.ReadyUpPayload;
 import com.spectopics.s2game.dto.clientPayloads.StartGamePayload;
-import com.spectopics.s2game.models.Battle;
 import com.spectopics.s2game.models.Creature;
 import com.spectopics.s2game.models.LobbyState;
 import com.spectopics.s2game.models.Player;
@@ -16,10 +15,12 @@ import com.spectopics.s2game.models.Player;
 @Service
 public class LobbyCommandService {
     private GameEventService gameEventService;
+    private ActionService actionService;
 
-    public LobbyCommandService(GameEventService gameEventService) {
+    public LobbyCommandService(GameEventService gameEventService, ActionService actionService) {
         // Get the game event service not from the injection, but from the SocketServiceRouter to avoid circular dependency issues
         this.gameEventService = gameEventService;
+        this.actionService = actionService;
     }
 
     public void handleCreateLobby(CreateLobbyPayload payload, WebSocketSession session) throws Exception {
@@ -63,7 +64,7 @@ public class LobbyCommandService {
         if (LobbyStageService.StartGame(LobbyService.GetLobby(payload.lobbyId), PlayerService.GetPlayerBySession(session)))
             gameEventService.buyStageStarted(LobbyService.GetLobby(payload.lobbyId));   
         else {
-            throw new Exception("The lobby is either not at the proper player count or is not the owner.");
+            System.out.println("Failed to start game for lobby with id: " + payload.lobbyId);
         }
     }
 
@@ -96,11 +97,24 @@ public class LobbyCommandService {
 
     public void handleActionCalled(ActionPayload payload, WebSocketSession session) throws Exception {
         Player player = PlayerService.GetPlayerBySession(session);
-        LobbyState lobby = LobbyService.GetLobbyByPlayerId(player.getId());
-        Battle battle = BattleService.getBattleByPlayerId(lobby.getBattles(), player.getId());
 
-        ActionService.CallAction(battle, payload.action);
+        System.out.println("Player " + player.getName() + " has called action: " + payload.action);
+        actionService.CallAction(player, payload.action);
 
         gameEventService.sendLobbyStateToClients(LobbyService.GetLobbyByPlayerId(player.getId()));
+    }
+
+    public void handlePlayerDisconnect(WebSocketSession session) throws Exception {
+        // Remove the session from the player that disconnected
+        Player playerDisconnected = PlayerService.GetPlayerBySession(session);
+        if (playerDisconnected == null) return;
+
+        LobbyState lobby = LobbyService.GetLobbyByPlayerId(playerDisconnected.getId());
+        PlayerService.RemovePlayer(playerDisconnected);
+
+        if (lobby != null) {
+            gameEventService.sendLobbyStateToClients(lobby);
+        }
+        
     }
 }
