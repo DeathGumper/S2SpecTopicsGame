@@ -77,6 +77,22 @@ public class ActionService {
         return true;
     }
 
+    public boolean DamagePlayer(Player player, String act) {
+        float movePow = Float.parseFloat(act.split("-")[1]);
+        float userAtk = player.GetActiveCreature().getStats().getStrength();
+        float enemyDef = opponent.GetActiveCreature().getStats().getDefense();
+
+        float crit = ((int) (Math.random() * 24) == 0) ? 1.5f : 1.0f;
+        float rand = ((int) (Math.random() * 15) + 86) * 0.01f;
+
+        float poisonMultiplier = player.GetActiveCreature().getPoisonDamageMultiplier();
+
+        float dmg = (((22 * movePow * userAtk / enemyDef) / 50) + 2) * crit * rand * poisonMultiplier;
+        player.GetActiveCreature().getStats().AdjustHealth(-dmg);
+
+        return true;
+    }
+
     public boolean Heal(Player player, String act) {
         float healAmount = Float.parseFloat(act.split("-")[1]);
         player.GetActiveCreature().getStats().AdjustHealth(healAmount);
@@ -94,6 +110,18 @@ public class ActionService {
         );
         
         this.gameEventService.creatureStunned(player, opponent.GetActiveCreature());
+
+        return true;
+    }
+
+    public boolean SelfStun(Player player, String act) {
+        float effectPower = Float.parseFloat(act.split("-")[1]);
+
+        player.GetActiveCreature().getStats().setStun(
+            player.GetActiveCreature().getStats().getStun() + effectPower
+        );
+        
+        this.gameEventService.creatureStunned(player, player.GetActiveCreature());
 
         return true;
     }
@@ -122,8 +150,6 @@ public class ActionService {
         opponent.GetActiveCreature().getStats().setPoison(
             opponent.GetActiveCreature().getStats().getPoison() + effectPower
         );
-
-
 
         return true;
     }

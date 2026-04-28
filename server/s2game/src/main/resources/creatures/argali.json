@@ -10,6 +10,7 @@
         "accuracy": 5000
     },
     "abilities": {
-        "Claw": "DamageEnemy-1000"
+        "Claw": "DamageEnemy-1000",
+        "Ram": "DamageEnemy-2000|DamagePlayer-500"
     }
 }
