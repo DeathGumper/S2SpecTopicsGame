@@ -22,6 +22,7 @@ public class MetaDataService {
                     // I will read the json as a map and then set the abilities, which i will turn into a map, to the creature
                     System.out.println(mapper.convertValue(creature, Map.class).get("abilities"));
                     //creature.setAbilities();
+                    creature.resetHealth();
                     CreatureService.AddNew(creature);
                     System.out.println("Loaded creature: " + creature.getName());
                 } catch (Exception e) {

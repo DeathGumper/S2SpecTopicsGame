@@ -1,0 +1,50 @@
+.creature-card {
+    border: 0.2vh solid #ccc;
+    border-radius: 4vh;
+    padding: 1vh;
+    margin: auto;
+    width: 15vw;
+    height: 30vh;
+    background-color: transparent;
+}
+
+.glow-border {
+    box-shadow: 0 0 10px #00ffff
+}
+
+.status-effect-container {
+    display: flex;
+    gap: 0.5vh;
+    margin-top: 1vh;
+    justify-content: center;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 0%;
+    top: 100%;
+}
+
+.status-effect {
+    border: 0.2vh solid var(--text);
+    width: 5vh;
+    height: 5vh;
+    border-radius: 2vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.fire-effect {
+    border-color: red;
+    background-color: rgb(158, 49, 2);
+}
+
+.stun-effect {
+    border-color: grey;
+    background-color: lightgrey;
+}
+
+.poison-effect {
+    border-color: green;
+    background-color: lightgreen;
+}

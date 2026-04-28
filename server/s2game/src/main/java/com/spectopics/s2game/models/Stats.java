@@ -12,6 +12,18 @@ public class Stats {
     private float speed = -1;
     private float accuracy = -1;
 
+    // Effects
+    private float stun = 0; // Each stack of stun means that is the chance that the creature will be stunned at the start of its turn. 
+                            // For example, if stun is 30, then there is a 30% chance the creature will be stunned at the start of its turn.
+                            // When stunned, the stacks will get reset.
+    private float burn = 0; // Each stack of burn is the damage x 100 that the creature will take at the start of its turn. 
+                            // For example, if burn is 1 then the creature will take 100 damage at the start of its turn. 
+                            // When burned, the stacks are halved (rounding down) after taking damage.
+
+    private float poison = 0; // Each stack of poison is the damage by a multiplier of 1 + (poison/10)
+                              // For example, if poison is 5 then the creature will take 1.5x damage from all sources.
+                              // When poisoned, the stacks go down by 1 at the end of its turn.
+
     //Health
     public boolean SetHealth(float hp) {
         /*
@@ -183,5 +195,4 @@ public class Stats {
         accuracy = 0;
         return false;
     }
-
 }

@@ -10,6 +10,6 @@
         "accuracy": 5500
     },
     "abilities": {
-        "Claw": "DamageEnemy-100"
+        "Fire Breath": "DamageEnemy-1000|Ignite-10"
     }
 }

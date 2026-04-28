@@ -17,7 +17,6 @@ public class LobbyState {
     private String id;
 
     private List<Player> players;
-    private List<Battle> battles;
 
     private StageState stage;
     private float stageTimer;

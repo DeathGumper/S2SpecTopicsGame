@@ -10,6 +10,6 @@
         "accuracy": 7500
     },
     "abilities": {
-        "Claw": "DamageEnemy-100"
+        "Tail Whip": "DamageEnemy-1000|Stun-20"
     }
 }

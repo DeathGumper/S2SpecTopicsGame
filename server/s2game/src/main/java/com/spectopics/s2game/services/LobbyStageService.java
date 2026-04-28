@@ -1,6 +1,7 @@
 package com.spectopics.s2game.services;
 
 import com.spectopics.s2game.enums.StageState;
+import com.spectopics.s2game.models.Creature;
 import com.spectopics.s2game.models.LobbyState;
 import com.spectopics.s2game.models.Player;
 
@@ -38,9 +39,24 @@ public class LobbyStageService {
             return false;
         }
 
+        // Clear battle state from previous round
+        for (Player player : lobbyState.getPlayers()) {
+            player.setOpponent(null);
+            player.setBattleState(null);
+        }
+
         // Set to buy stage and set timer
         lobbyState.setStage(StageState.BUYSTAGE);
         lobbyState.setStageTimer(lobbyState.getLobbySettings().getBuyStageTimer());
+
+        // Reset all creatures
+        for (Player player : lobbyState.getPlayers()) {
+            for (Creature creature : player.getCreatures()) {
+                if (creature == null) continue;
+                creature.resetHealth();
+                creature.resetStatusEffects();
+            }
+        }
 
         return true;
     }
@@ -79,6 +95,7 @@ public class LobbyStageService {
      */
 
     public static boolean GoToBattleStage(LobbyState lobbyState) {
+        lobbyState.setStageTimer(0);
         lobbyState.setStage(StageState.BATTLESTAGE);
 
         for (Player player : lobbyState.getPlayers()) {

@@ -1,51 +1,99 @@
 package com.spectopics.s2game.services;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.spectopics.s2game.models.Battle;
+import com.spectopics.s2game.enums.BattleState;
 import com.spectopics.s2game.models.LobbyState;
 import com.spectopics.s2game.models.Player;
 
-public class BattleService {
-    /**
-     * Makes all the battles
-     * @param players
-     * @return
-     */
-    public static List<Battle> MakeBattles(LobbyState lobbyState) {
-        List<Player> players = lobbyState.getPlayers();
-        List<Battle> battles = new ArrayList<Battle>();
-        
-        // currently only supports 2 players, so just make 1 battle with the 2 players. In the future we can add support for more players and multiple battles.
-        battles.add(new Battle(players.get(0), players.get(1)));
+import java.util.List;
 
-        lobbyState.setBattles(battles);
-        return battles;
+import org.springframework.stereotype.Service;
+
+@Service
+public class BattleService {
+
+    public void AssignOpponents(LobbyState lobbyState) {
+        List<Player> players = lobbyState.getPlayers();
+        // Currently only supports 2 players
+        Player p1 = players.get(0);
+        Player p2 = players.get(1);
+        p1.setOpponent(p2);
+        p2.setOpponent(p1);
+        if (p1.getCreatures().length == 0) {
+            System.out.println(p1.getName() + " has no creatures, automatically loses!");
+            p1.setBattleState(BattleState.LOST);
+            p2.setBattleState(BattleState.WON);
+        } else if (p2.getCreatures().length == 0) {
+            System.out.println(p2.getName() + " has no creatures, automatically loses!");
+            p1.setBattleState(BattleState.WON);
+            p2.setBattleState(BattleState.LOST);
+        } else {
+            p1.setBattleState(BattleState.MY_TURN);
+            p2.setBattleState(BattleState.OPPONENT_TURN);
+
+            p1.setActiveCreatureIndex(0);
+            p2.setActiveCreatureIndex(0);
+        }
     }
 
-    /**
-     * Checks if all battles in the list are done.
-     * @param battles
-     * @return
-     */
-    public static boolean checkAllBattlesDone(List<Battle> battles) {
-        for (Battle battle : battles) {
-            if (!battle.isBattleDone()) {
+    public boolean checkAllBattlesDone(LobbyState lobbyState) {
+        for (Player player : lobbyState.getPlayers()) {
+            BattleState state = player.getBattleState();
+            if (state != BattleState.WON && state != BattleState.LOST) {
                 return false;
             }
         }
         return true;
     }
 
-    public static Battle getBattleByPlayerId(List<Battle> battles, String playerId) {
-        for (Battle battle : battles) {
-            // Check if either the player 1 or player 2's id = player id
-            if (battle.getPlayer1().getId().equals(playerId) || battle.getPlayer2().getId().equals(playerId)) {
-                return battle;
+    public void RemoveLives(LobbyState lobbyState) {
+        for (Player player : lobbyState.getPlayers()) {
+            if (player.getBattleState() == BattleState.LOST) {
+                player.setLives(player.getLives() - 1);
+                System.out.println(player.getName() + " lost a life! Lives left: " + player.getLives());
+            }
+        }
+    }
+
+    public void NextTurn(Player player) {
+        Player opponent = player.getOpponent();
+
+        // This is post player turn but before the next turn starts.
+
+        // Post players turn...
+        // Reduce the poison stacks by 1 at the end of the players turn.
+        if (player.GetActiveCreature().getStats().getPoison() > 0) {
+            player.GetActiveCreature().getStats().setPoison(player.GetActiveCreature().getStats().getPoison() - 1);
+            System.out.println(player.getName() + " is poisoned and now has " + player.GetActiveCreature().getStats().getPoison() + " poison stacks left!");
+        }
+
+        // Start of opponents turn...
+        // Take burn damage
+        opponent.GetActiveCreature().takeBurn();
+
+        // Check if the opponents active creatures is still alive after the turn.
+        if (opponent.GetActiveCreature().getStats().getHealth() <= 0) {
+            System.out.println(opponent.getName() + "'s active creature fainted!");
+            if (opponent.NextCreature()) {
+                System.out.println(opponent.getName() + " sends out " + opponent.GetActiveCreature().getName() + "!");
+                // Still the players turn
+                return;
+            } else {
+                System.out.println(opponent.getName() + " has no more creatures to send out and loses!");
+                opponent.setBattleState(BattleState.LOST);
+                player.setBattleState(BattleState.WON);
+                return;
             }
         }
 
-        return null;
+        // Check if the opponents active creature is stunned and skip their turn if so.
+        if (opponent.GetActiveCreature().checkStun()) {
+            System.out.println(opponent.getName() + "'s active creature is stunned and loses their turn!");
+            // Still the players turn
+            return;
+        } 
+        // sets the next turn
+        player.setBattleState(BattleState.OPPONENT_TURN);
+        opponent.setBattleState(BattleState.MY_TURN);
+        return;
     }
 }

@@ -1,10 +1,19 @@
 const ALLSCENES = Object.freeze({
+    TITLESCREEN: 'title-screen',
+    WEBSOCKETLOADING: 'websocket-loading',
     MAINMENU: 'main-menu',
     LOBBYFINDING: 'lobby-finding',
     LOBBY: 'lobby',
-    BUY: 'buy',
-    BATTLE: 'battle',
-    END: 'end'
+    BUY: 'buy-stage',
+    BATTLE: 'battle-stage',
+    END: 'end-stage'
 })
 
-export { ALLSCENES }
+const ALLSTAGES = Object.freeze({
+    LOBBY: 'LOBBY',
+    BUY: 'BUYSTAGE',
+    BATTLE: 'BATTLESTAGE',
+    RESULTS: 'RESULTSSTAGE'
+})
+
+export { ALLSCENES, ALLSTAGES }

@@ -1,0 +1,62 @@
+#abilities-display {
+    height: 20vh;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1vh;
+    width: 50vw;
+    position: absolute;
+    top: 80vh;
+    left: 0;
+    border: 0.2vh solid var(--text);
+    border-top-right-radius: 4vh;
+    border-left: none;
+    border-bottom: none;
+}
+
+#abilities-display h2 {
+    font-size: 4vh;
+}
+
+.opponent-name {
+    position: absolute;
+    top: 5vh;
+    right: 5vw;
+    font-size: 4vh;
+}
+
+/* make the abilties container center the buttons vertically and then make the buttons spread out horizontally */
+
+#ability-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    gap: 1vh;
+    height: 100%;
+    padding: 0 1vh;
+    margin: 0 auto;
+}
+
+.ability-button {
+    width: 15vw;
+    height: 7vh;
+    padding: 0.5vh 1vh;
+    font-size: 3vh;
+    cursor: pointer;
+    background-color: transparent;
+    border: var(--text) solid 0.1vh;
+    border-radius: 1vh;
+    margin: 0;
+}
+
+#player-creature {
+    position: absolute;
+    top: 30vh;
+    right: 20vw;
+}
+
+#opponent-creature {
+    position: absolute;
+    top: 20vh;
+    left: 15vw;
+}

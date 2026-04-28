@@ -24,14 +24,11 @@ public class PlayerService {
     public static void RemovePlayer(Player player) {
         allPlayers.remove(player);
 
-        // go thru each lobby and check if the player exists
-        // if so then remove
-        for (LobbyState lobby: LobbyService.GetAllLobbies()) {
-            if (lobby.getPlayers().contains(player)) {
-                lobby.RemovePlayer(player);
-            }
+        LobbyState lobby = LobbyService.GetLobbyByPlayerId(player.getId());
+        if (lobby != null) {
+            lobby.RemovePlayer(player);
         }
-        // this is inefficient
+
     }
     
     // Gets an player that is connected to the server.

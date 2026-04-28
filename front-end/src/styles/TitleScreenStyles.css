@@ -1,0 +1,12 @@
+#title-screen h1 {
+    font-size: 10vh;
+    padding: 3vh;
+}
+
+#title-screen button {
+    font-size: 5vh;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

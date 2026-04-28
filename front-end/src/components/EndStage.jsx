@@ -1,7 +1,14 @@
-function EndStage({ setScene }) {
+import StageTimer from "./StageTimer"
+
+function EndStage({ lobbyState, playerId }) {
+
+    const player = lobbyState?.players.find(p => p.id === playerId)
+    
     return (
         <div className="end-stage">
-            <h1>End Stage</h1>
+            <StageTimer serverTime={lobbyState.stageTimer} />
+            <h1 className="title">End Stage</h1>
+            <h3>{player?.battleStage == "WON" ? "You won!" : "You lost!"}</h3>
         </div>
     )
 }

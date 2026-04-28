@@ -24,8 +24,10 @@ public class LobbyService {
         return lobby;
     }
 
-    public static boolean KillLobby(LobbyState lobby) {
-        return lobbies.remove(lobby);
+    public static void KillLobby(LobbyState lobby) {
+        lobbies.remove(lobby);
+        
+        System.out.println(lobbies);
     }
 
     public static LobbyState GetLobbyByPlayerId(String id) {

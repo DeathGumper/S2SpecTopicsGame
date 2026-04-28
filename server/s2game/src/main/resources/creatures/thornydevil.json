@@ -10,6 +10,6 @@
         "accuracy": 4000
     },
     "abilities": {
-        "Claw": "DamageEnemy-100"
+        "Claw": "DamageEnemy-1300|Poison-5"
     }
 }

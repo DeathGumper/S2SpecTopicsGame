@@ -6,6 +6,13 @@
       "runtimeExecutable": "./gradlew",
       "runtimeArgs": ["bootRun"],
       "port": 8080
+    },
+    {
+      "name": "frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "front-end",
+      "port": 5173
     }
   ]
 }
