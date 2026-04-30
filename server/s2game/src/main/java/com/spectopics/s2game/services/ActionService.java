@@ -93,7 +93,7 @@ public class ActionService {
             opponent.GetActiveCreature().getStats().getStun() + effectPower
         );
         
-        this.gameEventService.creatureStunned(player, opponent.GetActiveCreature());
+        this.gameEventService.creatureStunApplied(player, opponent.GetActiveCreature());
 
         return true;
     }

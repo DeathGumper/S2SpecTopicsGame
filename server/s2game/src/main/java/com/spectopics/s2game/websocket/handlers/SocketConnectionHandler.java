@@ -16,6 +16,7 @@ import com.spectopics.s2game.dto.clientPayloads.CreateLobbyPayload;
 import com.spectopics.s2game.dto.clientPayloads.JoinLobbyPayload;
 import com.spectopics.s2game.dto.clientPayloads.ReadyUpPayload;
 import com.spectopics.s2game.dto.clientPayloads.StartGamePayload;
+import com.spectopics.s2game.models.Creature;
 import com.spectopics.s2game.models.LobbyState;
 import com.spectopics.s2game.services.LobbyCommandService;
 
@@ -122,9 +123,16 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
                 );
                 break;
 
+            case "GET_CREATURE_BUY_OPTIONS":
+                lobbyCommandService.getCreatureBuyOptions(
+                    session
+                );
+                break;
+
             // Temporary
-            case "BUY_RANDOM_CREATURE":
-                lobbyCommandService.buyRandomCreature(
+            case "BUY_CREATURE":
+                lobbyCommandService.buyCreature(
+                    objectMapper.treeToValue(payloadNode, Creature.class),
                     session
                 );
                 break;

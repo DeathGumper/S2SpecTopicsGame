@@ -3,6 +3,9 @@ import { LobbyJoinedPayload } from '../dto/serverPayloads/LobbyJoinedPayload.js'
 import { BuyStageStartedPayload } from '../dto/serverPayloads/BuyStageStartedPayload.js';
 import { BattlesStartedPayload } from '../dto/serverPayloads/BattlesStartedPayload.js';
 import { ResultsStageStartedPayload } from '../dto/serverPayloads/ResultsStageStartedPayload.js';
+import { CreatureStatusAppliedPayload } from '../dto/serverPayloads/CreatureStatusAppliedPayload.js';
+import { CreatureBurnedPayload } from '../dto/serverPayloads/CreatureBurnedPayload.js';
+import { CreatureStunnedPayload } from '../dto/serverPayloads/CreatureStunnedPayload.js';
 
 const PRODUCTION_URL = 'https://s2project.azurewebsites.net';
 
@@ -44,7 +47,6 @@ class WebSocketConnection {
         }
         try {
             this.websocket.send(JSON.stringify(message));
-            console.log('Sent message: ', message);
         } catch (e) {
             console.log('Failed to send message: ' + e);
         }
@@ -86,10 +88,27 @@ class WebSocketConnection {
                     return { type, payload: ResultsStageStartedPayload.fromDict(payload) };
 
                 case 'CREATURE_STUNNED':
-                    return { type, payload };
+                    return { type, payload: CreatureStunnedPayload.fromDict(payload) };
                 
                 case 'CREATURE_BURNED':
                     // Payload contains damage from burn
+                    console.log("burned " + payload)
+                    return { type, payload: CreatureBurnedPayload.fromDict(payload) };
+
+                case 'CREATURE_STATUS_APPLIED':
+                    console.log("statuseffect " + payload)
+                    return { type, payload: CreatureStatusAppliedPayload.fromDict(payload) };
+
+                case 'CREATURE_BUY_OPTIONS':
+                    // Payload contains array of Creatures
+                    if (Array.isArray(payload)) {
+                        const mapped = (typeof Creature !== 'undefined' && Creature.fromDict)
+                            ? payload.map(Creature.fromDict)
+                            : payload;
+
+                        console.log(mapped)
+                        return { type, payload: mapped };
+                    }
                     return { type, payload };
 
                 case 'UPDATE':

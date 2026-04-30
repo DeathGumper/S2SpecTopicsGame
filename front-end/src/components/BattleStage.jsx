@@ -12,22 +12,18 @@ function BattleStage({ lobbyState, playerId }) {
     const playerCreature = player?.creatures[player.activeCreatureIndex]
     const opponentCreature = opponent?.creatures[opponent.activeCreatureIndex]
 
-    console.log(player.battleState)
-    console.log(opponent.battleState)
-
     return (
         <div className="battle-stage">
-            <h1 className="title">Battle!</h1>
             <h2 className="opponent-name">Opponent: {opponent?.name}</h2>
-            <div id="player-creature">
 
-                <HealthBar creatureData={playerCreature} />
-                <h2>Player Creature</h2>
+            <HealthBar creatureData={opponentCreature} x={5} y={5} w={40} h={5} />
+            <HealthBar creatureData={playerCreature} x={55} y={5} w={40} h={5} />
+            <h3 id="opponents-creatures-left">Creatures Left: {opponent?.creatures.length}</h3>
+            <div style={{ transform: 'scale(1.5)'}} id="player-creature" className="creature-display">
+                <h2>Your Creature</h2>
                 <CreatureDisplay creatureData={playerCreature} active={true} turn={player.battleState == 'MY_TURN'}/>
             </div>
-            <div id="opponent-creature">
-
-                <HealthBar creatureData={opponentCreature} />
+            <div id="opponent-creature" className="creature-display">
                 <h2>Opponent Creature</h2>
                 <CreatureDisplay creatureData={opponentCreature} active={false} turn={opponent.battleState == 'MY_TURN'} />
             </div>

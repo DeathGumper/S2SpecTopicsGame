@@ -23,7 +23,6 @@ export class Player {
             data.owner,
             data.opponentId
         );
-        console.log(data);
         player.battleState = data.battleState;
         return player;
     }

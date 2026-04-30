@@ -19,9 +19,16 @@
 
 .opponent-name {
     position: absolute;
-    top: 5vh;
-    right: 5vw;
+    top: 0vh;
+    left: 5vw;
     font-size: 4vh;
+}
+
+#opponents-creatures-left {
+    position: absolute;
+    top: 10vh;
+    left: 7dvb;
+    font-size: 3vh;
 }
 
 /* make the abilties container center the buttons vertically and then make the buttons spread out horizontally */
@@ -59,4 +66,8 @@
     position: absolute;
     top: 20vh;
     left: 15vw;
+}
+
+.creature-display h2 {
+    margin-bottom: 1vh;
 }

@@ -18,6 +18,14 @@ public class CreatureService {
         return creature;
     }
 
+    public static Creature[] GetRandomCreatureOptions(int amount) {
+        Creature[] creatures = new Creature[amount];
+        for (int i = 0; i < amount; i++) {
+            creatures[i] = GetRandomCreature();
+            System.out.println(creatures[i]);
+        }
+        return creatures;
+    }
 
     // Creature declaration stuff
     public static void AddNew(Creature creature) {

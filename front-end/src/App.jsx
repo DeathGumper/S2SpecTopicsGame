@@ -29,6 +29,7 @@ function usePrevious(value) {
 function App() {
     const [scene, setScene] = useState(ALLSCENES.TITLESCREEN)
     const [lobbyState, setLobbyState] = useState(null)
+    const [buyOptions, setBuyOptions] = useState(null)
     const previousLobbyState = usePrevious(lobbyState);
     const [playerId, setPlayerId] = useState(null)
 
@@ -58,11 +59,18 @@ function App() {
                 } else if (type === 'RESULTSSTAGE_STARTED') {
                     setLobbyState(payload.lobbyState);
 
-                } else if (type === 'CREATURE_STATUS_APPLIED') {
-                    alert(payload.creature.name + ' was affected by ' + payload.statusEffect + '!');
-                
+                } else if (type === 'CREATURE_STUNNED') {
+                    alert(payload.creature.name + ' was stunned!');
+
                 } else if (type === 'CREATURE_BURNED') {
                     alert(payload.creature.name + ' was burned for ' + payload.damage + ' damage!');
+
+                } else if (type === 'CREATURE_BUY_OPTIONS') {
+                    console.log(payload)
+                    setBuyOptions(payload)
+
+                } else if (type === 'CREATURE_STATUS_APPLIED') {
+                    console.log(payload.creature.name + ' was affected by ' + payload.statusEffect + '!');
 
                 } else if (type === 'UPDATE') {
                     setLobbyState(payload);
@@ -76,7 +84,6 @@ function App() {
 
     useEffect(() => {
         if (!lobbyState) return;
-        console.log('Lobby State Updated:', lobbyState);
 
         if (lobbyState.stage === ALLSTAGES.LOBBY) {
             setScene(ALLSCENES.LOBBY)
@@ -87,8 +94,6 @@ function App() {
         } else if (lobbyState.stage === ALLSTAGES.RESULTS) {
             setScene(ALLSCENES.END)
         }
-        
-        console.log(previousLobbyState)
 
     }, [lobbyState])
 
@@ -110,7 +115,7 @@ function App() {
             sceneComponent = <Lobby lobbyState={lobbyState} playerId={playerId} />
             break;
         case ALLSCENES.BUY:
-            sceneComponent = <BuyStage lobbyState={lobbyState} playerId={playerId} />
+            sceneComponent = <BuyStage setBuyOptions={setBuyOptions} buyOptions={buyOptions} lobbyState={lobbyState} playerId={playerId} />
             break;
         case ALLSCENES.BATTLE:
             sceneComponent = <BattleStage lobbyState={lobbyState} playerId={playerId} />
