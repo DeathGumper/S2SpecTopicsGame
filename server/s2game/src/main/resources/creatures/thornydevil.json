@@ -1,8 +1,9 @@
 {
     "id": "thorny-devil",
     "name": "Thorny Devil",
+    "price": 110,
     "stats": {
-        "maxHealth": 3000,
+        "maxHealth": 5000,
         "strength": 4000,
         "defense": 9000,
         "dexterity": 5500,

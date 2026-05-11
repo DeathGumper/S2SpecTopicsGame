@@ -12,6 +12,8 @@ import Lobby from './components/Lobby'
 import BuyStage from './components/BuyStage'
 import BattleStage from './components/BattleStage'
 import EndStage from './components/EndStage'
+import Instructions from './components/Instructions'
+import GameOverScreen from './components/GameOverScreen'
 
 // Custom hook to get the previous value of a state variable
 function usePrevious(value) {
@@ -29,8 +31,11 @@ function usePrevious(value) {
 function App() {
     const [scene, setScene] = useState(ALLSCENES.TITLESCREEN)
     const [lobbyState, setLobbyState] = useState(null)
-    const previousLobbyState = usePrevious(lobbyState);
+    const [buyOptions, setBuyOptions] = useState(null)
+    const [gameResult, setGameResult] = useState(null)
+    const previousLobbyState = usePrevious(lobbyState)
     const [playerId, setPlayerId] = useState(null)
+    const gameOverRef = useRef(false)
 
     useEffect(() => {
         const handler = () => {
@@ -40,6 +45,7 @@ function App() {
                     setScene(ALLSCENES.MAINMENU);
 
                 } else if (type === 'LOBBY_JOINED') {
+                    gameOverRef.current = false;
                     setLobbyState(payload.lobbyState);
                     setPlayerId(payload.playerId);
 
@@ -58,14 +64,19 @@ function App() {
                 } else if (type === 'RESULTSSTAGE_STARTED') {
                     setLobbyState(payload.lobbyState);
 
+                } else if (type === 'CREATURE_BUY_OPTIONS') {
+                    setBuyOptions(payload)
+
                 } else if (type === 'CREATURE_STATUS_APPLIED') {
-                    alert(payload.creature.name + ' was affected by ' + payload.statusEffect + '!');
-                
-                } else if (type === 'CREATURE_BURNED') {
-                    alert(payload.creature.name + ' was burned for ' + payload.damage + ' damage!');
+                    console.log(payload.creature.name + ' was affected by ' + payload.statusName + '!');
 
                 } else if (type === 'UPDATE') {
                     setLobbyState(payload);
+                } else if (type === 'GAME_OVER') {
+                    gameOverRef.current = true;
+                    setLobbyState(null);
+                    setScene(ALLSCENES.GAMEOVER)
+                    setGameResult(payload.result)
                 }
             });
         };
@@ -75,8 +86,7 @@ function App() {
     }, []);
 
     useEffect(() => {
-        if (!lobbyState) return;
-        console.log('Lobby State Updated:', lobbyState);
+        if (!lobbyState || gameOverRef.current) return;
 
         if (lobbyState.stage === ALLSTAGES.LOBBY) {
             setScene(ALLSCENES.LOBBY)
@@ -87,8 +97,6 @@ function App() {
         } else if (lobbyState.stage === ALLSTAGES.RESULTS) {
             setScene(ALLSCENES.END)
         }
-        
-        console.log(previousLobbyState)
 
     }, [lobbyState])
 
@@ -110,13 +118,19 @@ function App() {
             sceneComponent = <Lobby lobbyState={lobbyState} playerId={playerId} />
             break;
         case ALLSCENES.BUY:
-            sceneComponent = <BuyStage lobbyState={lobbyState} playerId={playerId} />
+            sceneComponent = <BuyStage setBuyOptions={setBuyOptions} buyOptions={buyOptions} lobbyState={lobbyState} playerId={playerId} />
             break;
         case ALLSCENES.BATTLE:
             sceneComponent = <BattleStage lobbyState={lobbyState} playerId={playerId} />
             break;
         case ALLSCENES.END:
             sceneComponent = <EndStage lobbyState={lobbyState} playerId={playerId} />
+            break;
+        case ALLSCENES.INSTRUCTIONS:
+            sceneComponent = <Instructions setScene={setScene} />
+            break;
+        case ALLSCENES.GAMEOVER:
+            sceneComponent = <GameOverScreen gameResult={gameResult} setScene={setScene} />
             break;
         default:
             break;

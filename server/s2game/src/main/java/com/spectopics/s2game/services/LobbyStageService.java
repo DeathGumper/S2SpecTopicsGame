@@ -1,5 +1,6 @@
 package com.spectopics.s2game.services;
 
+import com.spectopics.s2game.enums.BattleState;
 import com.spectopics.s2game.enums.StageState;
 import com.spectopics.s2game.models.Creature;
 import com.spectopics.s2game.models.LobbyState;
@@ -25,6 +26,11 @@ public class LobbyStageService {
         if (lobbyState.getPlayers().size() != 2) {
             System.err.println("There is not exactly 2 players in the lobby.");
             return false;
+        }
+
+        for (Player player : lobbyState.getPlayers()) {
+            player.setMoney(100);
+            PlayerService.GivePlayerCreature(player, CreatureService.GetRandomCreature());
         }
 
         return GoToBuyStage(lobbyState);
@@ -69,6 +75,17 @@ public class LobbyStageService {
 
         lobbyState.setStage(StageState.RESULTSSTAGE);
         lobbyState.setStageTimer(lobbyState.getLobbySettings().getResultStageTimer());
+
+
+
+        for (Player player: lobbyState.getPlayers()) {
+            if (player.getBattleState() == BattleState.WON) {
+                player.setMoney(player.getMoney() + 60);
+            } else if (player.getBattleState() == BattleState.LOST) {
+                player.setMoney(player.getMoney() + 100);
+                player.setLives(player.getLives() - 1);
+            }
+        }
 
         return true;
     }

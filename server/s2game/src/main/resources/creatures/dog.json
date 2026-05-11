@@ -1,6 +1,7 @@
 {
     "id": "dog",
     "name": "Dog",
+    "price": 100,
     "stats": {
         "maxHealth": 4500,
         "strength": 6500,

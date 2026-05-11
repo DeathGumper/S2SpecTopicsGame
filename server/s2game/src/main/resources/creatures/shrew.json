@@ -1,6 +1,7 @@
 {
     "id": "shrew",
     "name": "Shrew",
+    "price": 90,
     "stats": {
         "maxHealth": 2000,
         "strength": 2000,

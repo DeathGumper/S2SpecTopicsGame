@@ -1,6 +1,7 @@
 {
     "id": "argali",
     "name": "Argali",
+    "price": 70,
     "stats": {
         "maxHealth": 5000,
         "strength": 3000,
@@ -10,6 +11,7 @@
         "accuracy": 5000
     },
     "abilities": {
-        "Claw": "DamageEnemy-1000"
+        "Claw": "DamageEnemy-1000",
+        "Headbutt": "DamageEnemy-300|Stun-30"
     }
 }

@@ -12,8 +12,8 @@ function GameController() {
         websocketConnection.sendMessage(new ClientMessage('READY_UP', new ReadyUpPayload(lobbyId)));
     };
 
-    this.buyCreature = function() {
-        websocketConnection.sendMessage(new ClientMessage('BUY_RANDOM_CREATURE', null));
+    this.buyCreature = function(creature) {
+        websocketConnection.sendMessage(new ClientMessage('BUY_CREATURE', creature));
     };
 
     this.endBattleStage = function(lobbyId) {
@@ -23,6 +23,11 @@ function GameController() {
     this.useAbility = function(abilityId) {
         websocketConnection.sendMessage(new ClientMessage('CALL_ACTION', new ActionPayload(abilityId)));
     }
+
+    this.getCreatureBuyOptions = function() {
+        websocketConnection.sendMessage(new ClientMessage('GET_CREATURE_BUY_OPTIONS', null))
+    }
+
 }
 
 export const gameController = new GameController();

@@ -23,6 +23,20 @@ public class LobbyCommandService {
         this.actionService = actionService;
     }
 
+    public void getCreatureBuyOptions(WebSocketSession session) {
+        Player player = PlayerService.GetPlayerBySession(session);
+        LobbyState lobby = LobbyService.GetLobbyByPlayerId(player.getId());
+
+        if (lobby == null) {
+            System.out.println("Error: Player " + player.getName() + " is not in a lobby");
+            return;
+        }
+
+        Creature[] buyOptions = CreatureService.GetRandomCreatureOptions(5);
+
+        gameEventService.sendCreatureBuyOptions(session, buyOptions);
+    }
+
     public void handleCreateLobby(CreateLobbyPayload payload, WebSocketSession session) throws Exception {
 
         Player owner = PlayerService.MakePlayer(payload.playerName, session);
@@ -85,12 +99,18 @@ public class LobbyCommandService {
         }
     }
 
-    public void buyRandomCreature(WebSocketSession session) {
+    public void buyCreature(Creature creature, WebSocketSession session) {
         Player player = PlayerService.GetPlayerBySession(session);
-        Creature creature = CreatureService.GetRandomCreature();
-        PlayerService.GivePlayerCreature(player, creature);
+        if (player.getMoney() >= creature.getPrice()) {
+            PlayerService.GivePlayerCreature(player, creature);
+            player.setMoney(player.getMoney() - creature.getPrice());
+            gameEventService.sendCreatureBuyOptions(session, CreatureService.GetRandomCreatureOptions(5));
+            System.out.println("Player bought a creature!");
+        }
+        else {
+            System.out.println("Player is broke hahahaha!");
+        }
 
-        System.out.println("Player " + player.getName() + " has requested to buy a random creature: " + creature);
 
         gameEventService.sendLobbyStateToClients(LobbyService.GetLobbyByPlayerId(player.getId()));
     }

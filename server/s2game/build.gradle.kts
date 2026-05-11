@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.spectopics"
-version = "0.0.6-SNAPSHOT"
+version = "1.0.1-BETA"
 description = "Server for spec topics semester 2 game"
 
 java {

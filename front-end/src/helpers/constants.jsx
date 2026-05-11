@@ -6,7 +6,9 @@ const ALLSCENES = Object.freeze({
     LOBBY: 'lobby',
     BUY: 'buy-stage',
     BATTLE: 'battle-stage',
-    END: 'end-stage'
+    END: 'end-stage',
+    INSTRUCTIONS: 'instructions',
+    GAMEOVER: 'game-over'
 })
 
 const ALLSTAGES = Object.freeze({

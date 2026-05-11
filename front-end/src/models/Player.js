@@ -1,7 +1,7 @@
 import { Creature } from './Creature.js';
 
 export class Player {
-    constructor(name, id, lives, creatures, activeCreatureIndex, ready, owner, opponentId) {
+    constructor(name, id, lives, creatures, activeCreatureIndex, ready, owner, opponentId, money) {
         this.name = name;
         this.id = id;
         this.lives = lives;
@@ -10,6 +10,7 @@ export class Player {
         this.ready = ready;
         this.owner = owner;
         this.opponentId = opponentId;
+        this.money = money;
     }
 
     static fromDict(data) {
@@ -21,9 +22,9 @@ export class Player {
             data.activeCreatureIndex,
             data.ready,
             data.owner,
-            data.opponentId
+            data.opponentId,
+            data.money
         );
-        console.log(data);
         player.battleState = data.battleState;
         return player;
     }
