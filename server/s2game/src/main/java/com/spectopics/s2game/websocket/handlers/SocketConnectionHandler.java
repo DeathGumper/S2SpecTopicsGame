@@ -167,7 +167,9 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
 
         for (WebSocketSession session : sessions) {
             if (session.isOpen()) {
-                session.sendMessage(new TextMessage(json));
+                synchronized (session) {
+                    session.sendMessage(new TextMessage(json));
+                }
             }
         }
     }
@@ -179,7 +181,9 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
         String json = mapper.writeValueAsString(message);
 
         if (session.isOpen()) {
-            session.sendMessage(new TextMessage(json));
+            synchronized (session) {
+                session.sendMessage(new TextMessage(json));
+            }
         }
     }
 }

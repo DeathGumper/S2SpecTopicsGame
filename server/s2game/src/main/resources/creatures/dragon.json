@@ -1,6 +1,7 @@
 {
     "id": "dragon",
     "name": "Dragon",
+    "price": 150,
     "stats": {
         "maxHealth": 8000,
         "strength": 7000,

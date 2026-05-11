@@ -1,0 +1,26 @@
+.popup {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    width: 30vw;
+    height: 15vh;
+    transform: translateX(-50%);
+    background-color: var(--card-bg);
+    color: var(--text);
+    padding: 2vh;
+    border-radius: 0 0 4vh 4vh;
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    /* Animation */
+    animation: slideDownFade 5s forwards;
+    border: 0.2vh solid var(--text);
+}
+
+@keyframes slideDownFade {
+  0% { top: -100px; opacity: 0; }   /* Start hidden above */
+  10% { top: 0; opacity: 1; }       /* Slide down quickly */
+  90% { top: 0; opacity: 1; }       /* Stay visible */
+  100% { top: -100px; opacity: 0; } /* Slide up and fade */
+}

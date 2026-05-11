@@ -21,7 +21,15 @@ public class CreatureService {
     public static Creature[] GetRandomCreatureOptions(int amount) {
         Creature[] creatures = new Creature[amount];
         for (int i = 0; i < amount; i++) {
-            creatures[i] = GetRandomCreature();
+            Creature newCreature = GetRandomCreature();
+            for (Creature creat: creatures) {
+                if (creat == null) continue;
+                if (creat.getName().equals(newCreature.getName())) {
+                    i--;
+                    continue;
+                }
+            }
+            creatures[i] = newCreature;
             System.out.println(creatures[i]);
         }
         return creatures;

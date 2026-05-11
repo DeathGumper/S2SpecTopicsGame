@@ -33,3 +33,32 @@
     border-left: none;
     padding: 2vh;
 }
+
+#buy-stage #information {
+    position: absolute;
+    padding: 1vh;
+    padding-bottom: 4vh;
+    width: 16vw;
+    right: 0;
+    border: 0.2vh solid var(--text);
+    border-bottom-left-radius: 2vw;
+    border-right: none;
+    border-top: none;
+}
+
+#buy-stage #refresh {
+    position: absolute;
+    top: 50vh;
+    left: 3vw;
+}
+
+#buy-stage #ready-up {
+    position: absolute;
+
+    border-radius: 2vh;
+    border: 0.2vh solid var(--text);
+
+    left: 50vw;
+    top: 50vh;
+    
+}

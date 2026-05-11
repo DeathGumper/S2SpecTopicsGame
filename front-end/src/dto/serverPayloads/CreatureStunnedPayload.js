@@ -7,7 +7,7 @@ export class CreatureStunnedPayload {
     }
 
     static fromDict(data) {
-        return new CreatureStatusAppliedPayload(
+        return new CreatureStunnedPayload(
             Creature.fromDict(data.creature)
         );
     }   

@@ -6,6 +6,12 @@
     width: 15vw;
     height: 30vh;
     background-color: var(--card-bg);
+    position: relative;
+    overflow: visible;
+}
+
+.creature-card .creature-name {
+    font-size: 5vh;
 }
 
 .glow-border {

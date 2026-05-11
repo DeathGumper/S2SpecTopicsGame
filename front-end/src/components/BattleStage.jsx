@@ -1,9 +1,12 @@
 import { gameController } from '../controllers/GameController'
 import CreatureDisplay from './CreatureDisplay'
+import { websocketConnection } from '../controllers/WebSocketConnection'
 
 import HealthBar from './HealthBar'
 
 import '../styles/BattleStageStyles.css'
+import { useEffect, useState } from 'react'
+import StatusEffectPopup from './StatusEffectPopup'
 
 function BattleStage({ lobbyState, playerId }) {
     const player = lobbyState?.players.find(p => p.id === playerId)
@@ -12,9 +15,35 @@ function BattleStage({ lobbyState, playerId }) {
     const playerCreature = player?.creatures[player.activeCreatureIndex]
     const opponentCreature = opponent?.creatures[opponent.activeCreatureIndex]
 
+    const [currPopup, setCurrPopup] = useState(null)
+
+    useEffect(() => {
+        const handler = () => {
+            const updates = websocketConnection.getBattleUpdates();
+            updates.forEach(({ type, payload }) => {
+                if (type === 'CREATURE_BURNED') {
+                    setCurrPopup(<StatusEffectPopup statusName={"BURNED"} message={"Creature " + payload.creature.name + " has been burned for " + payload.damage + "!"}/>)
+                    setTimeout(() => {
+                        setCurrPopup(null)
+                    }, 5000)
+                } else if (type === 'CREATURE_STUNNED') {
+                    setCurrPopup(<StatusEffectPopup statusName={payload.statusName} message={"Creature " + payload.creature.name + " has been stunned and lost their turn."}/>)
+                    setTimeout(() => {
+                        setCurrPopup(null)
+                    }, 5000)
+                }
+            });
+        };
+
+        websocketConnection.addListener(handler);
+        return () => websocketConnection.removeListener(handler);
+    }, []);
+    
+
     return (
         <div className="battle-stage">
             <h2 className="opponent-name">Opponent: {opponent?.name}</h2>
+            {currPopup != null && currPopup}
 
             <HealthBar creatureData={opponentCreature} x={5} y={5} w={40} h={5} />
             <HealthBar creatureData={playerCreature} x={55} y={5} w={40} h={5} />

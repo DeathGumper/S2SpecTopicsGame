@@ -1,6 +1,7 @@
 {
     "id": "cat",
     "name": "Cat",
+    "price": 80,
     "stats": {
         "maxHealth": 2000,
         "strength": 2500,

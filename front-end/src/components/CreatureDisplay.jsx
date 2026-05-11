@@ -1,8 +1,9 @@
 import { gameController } from '../controllers/GameController'
+import CreatureTooltip from './CreatureTooltip'
 
 import '../styles/CreatureDisplayStyles.css'
 
-function CreatureDisplay({ creatureData,  turn, image, blank }) {
+function CreatureDisplay({ creatureData, turn, image, blank }) {
     return (
         <>
         {!blank ? (
@@ -17,13 +18,12 @@ function CreatureDisplay({ creatureData,  turn, image, blank }) {
                         {creatureData.stats.poison > 0 && <div className="status-effect poison-effect">{creatureData.stats.poison}</div>}
                     </div>
                 </div>
+                <CreatureTooltip creature={creatureData} />
             </div>
         ): (
             <div className="creature-card"></div>
         )}
         </>
-        
-            
     )
 }
 

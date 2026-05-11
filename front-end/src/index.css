@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'PixelOperator';
+  src: url('/fonts/PixelOperator.ttf') format('truetype');
+}
+
 :root {
   --text: #ecfdf5;                 /* soft mint white */
   --text-h: #052e16;              /* deep forest for headings */
@@ -18,8 +23,8 @@
     rgba(0, 0, 0, 0.4) 0 10px 20px -5px,
     rgba(0, 0, 0, 0.2) 0 4px 8px -2px;
 
-  --font: sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font: 'PixelOperator';
+  --heading: 'PixelOperator', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
   font: 18px/145% var(--font);
@@ -87,7 +92,6 @@ body {
 }
 
 h1 {
-  font-size: 56px;
   letter-spacing: -1.68px;
   @media (max-width: 1024px) {
     font-size: 36px;

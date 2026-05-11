@@ -11,6 +11,7 @@ import lombok.Data;
 public class Creature {
     private String name;
     private Stats stats;
+    private int price;
     private Map<String, String> abilities;
     private String[] effects;
     // private float totalSpeed;

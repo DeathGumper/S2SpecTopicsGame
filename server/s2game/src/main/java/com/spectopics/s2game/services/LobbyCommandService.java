@@ -101,9 +101,16 @@ public class LobbyCommandService {
 
     public void buyCreature(Creature creature, WebSocketSession session) {
         Player player = PlayerService.GetPlayerBySession(session);
-        PlayerService.GivePlayerCreature(player, creature);
+        if (player.getMoney() >= creature.getPrice()) {
+            PlayerService.GivePlayerCreature(player, creature);
+            player.setMoney(player.getMoney() - creature.getPrice());
+            gameEventService.sendCreatureBuyOptions(session, CreatureService.GetRandomCreatureOptions(5));
+            System.out.println("Player bought a creature!");
+        }
+        else {
+            System.out.println("Player is broke hahahaha!");
+        }
 
-        System.out.println("Player " + player.getName() + " has requested to buy a creature: " + creature);
 
         gameEventService.sendLobbyStateToClients(LobbyService.GetLobbyByPlayerId(player.getId()));
     }
