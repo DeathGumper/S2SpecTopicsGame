@@ -11,6 +11,8 @@
         "accuracy": 4000
     },
     "abilities": {
-        "Claw": "DamageEnemy-1300"
+        "Claw": "DamageEnemy-1300",
+        "Loaf": "Heal-1200|SelfStun-10",
+        "Bare Teeth": "WeakenEnemy-500"
     }
 }
