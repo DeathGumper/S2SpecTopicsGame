@@ -12,6 +12,7 @@
     },
     "abilities": {
         "Claw": "DamageEnemy-1000",
+        "Ram": "DamageEnemy-2000|DamagePlayer-500",
         "Headbutt": "DamageEnemy-300|Stun-30"
     }
 }

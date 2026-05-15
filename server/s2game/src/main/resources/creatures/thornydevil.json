@@ -11,6 +11,7 @@
         "accuracy": 4000
     },
     "abilities": {
-        "Claw": "DamageEnemy-1300|Poison-5"
+        "Claw": "DamageEnemy-1300|Poison-5",
+        "Chomp": "DamageEnemy-2500|SelfStun-80"
     }
 }
