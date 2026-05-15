@@ -7,6 +7,8 @@ import com.spectopics.s2game.dto.serverPayloads.BattlesStartedPayload;
 import com.spectopics.s2game.dto.serverPayloads.BuyStageStartedPayload;
 import com.spectopics.s2game.dto.serverPayloads.CreatureBurnedPayload;
 import com.spectopics.s2game.dto.serverPayloads.CreatureStatusAppliedPayload;
+import com.spectopics.s2game.dto.serverPayloads.CreatureStunnedPayload;
+import com.spectopics.s2game.dto.serverPayloads.GameOverPayload;
 import com.spectopics.s2game.dto.serverPayloads.LobbyJoinedPayload;
 import com.spectopics.s2game.dto.serverPayloads.ResultsStageStartedPayload;
 import com.spectopics.s2game.models.LobbyState;
@@ -15,6 +17,9 @@ import com.spectopics.s2game.websocket.handlers.SocketConnectionHandler;
 import com.spectopics.s2game.websocket.listenerTransferObjects.BattlesStartedEvent;
 import com.spectopics.s2game.websocket.listenerTransferObjects.BuyStageStartedEvent;
 import com.spectopics.s2game.websocket.listenerTransferObjects.CreatureBurnedEvent;
+import com.spectopics.s2game.websocket.listenerTransferObjects.CreatureStunnedEvent;
+import com.spectopics.s2game.websocket.listenerTransferObjects.GameOverEvent;
+import com.spectopics.s2game.websocket.listenerTransferObjects.GetCreatureBuyOptionsEvent;
 import com.spectopics.s2game.websocket.listenerTransferObjects.LobbyJoinedEvent;
 import com.spectopics.s2game.websocket.listenerTransferObjects.LobbyOwnerDisconnected;
 import com.spectopics.s2game.websocket.listenerTransferObjects.ResultsStageStartedEvent;
@@ -108,6 +113,34 @@ public class SocketEventListener {
     }
 
     @EventListener
+    public void handleCreatureStunned(CreatureStunnedEvent payload) throws Exception {
+        socketHandler.broadcastToIndividual(
+            payload.player.getOpponent().getSession(), 
+            "CREATURE_STUNNED",
+            new CreatureStunnedPayload(payload.creature)
+        );
+        socketHandler.broadcastToIndividual(
+            payload.player.getSession(),
+            "CREATURE_STUNNED",
+            new CreatureStunnedPayload(payload.creature)
+        );
+    }
+
+    @EventListener
+    public void handleGameOver(GameOverEvent payload) throws Exception {
+        socketHandler.broadcastToIndividual(
+            payload.winner.getOpponent().getSession(), 
+            "GAME_OVER",
+            new GameOverPayload("LOST")
+        );
+        socketHandler.broadcastToIndividual(
+            payload.winner.getSession(), 
+            "GAME_OVER",
+            new GameOverPayload("WON")
+        );
+    }
+
+    @EventListener
     public void handleCreatureStatusEffectApplied(StatusAppliedEvent payload) throws Exception {
         socketHandler.broadcastToIndividual(
             payload.player.getOpponent().getSession(), 
@@ -119,5 +152,14 @@ public class SocketEventListener {
             "CREATURE_STATUS_APPLIED",
             new CreatureStatusAppliedPayload(payload.creature, payload.statusName)
         );
+    }
+
+    @EventListener
+    public void handleCreatureBuyOptions(GetCreatureBuyOptionsEvent payload) throws Exception {
+        socketHandler.broadcastToIndividual(
+            payload.session,
+            "CREATURE_BUY_OPTIONS",
+            payload.options
+         );
     }
 }

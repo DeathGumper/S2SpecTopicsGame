@@ -7,6 +7,9 @@ import org.springframework.web.socket.WebSocketSession;
 import com.spectopics.s2game.websocket.listenerTransferObjects.BattlesStartedEvent;
 import com.spectopics.s2game.websocket.listenerTransferObjects.BuyStageStartedEvent;
 import com.spectopics.s2game.websocket.listenerTransferObjects.CreatureBurnedEvent;
+import com.spectopics.s2game.websocket.listenerTransferObjects.CreatureStunnedEvent;
+import com.spectopics.s2game.websocket.listenerTransferObjects.GameOverEvent;
+import com.spectopics.s2game.websocket.listenerTransferObjects.GetCreatureBuyOptionsEvent;
 import com.spectopics.s2game.websocket.listenerTransferObjects.StatusAppliedEvent;
 import com.spectopics.s2game.websocket.listenerTransferObjects.LobbyJoinedEvent;
 import com.spectopics.s2game.websocket.listenerTransferObjects.LobbyOwnerDisconnected;
@@ -54,16 +57,28 @@ public class GameEventService {
         publisher.publishEvent(new CreatureBurnedEvent(player, creature, damage));
     }
 
+    public void creatureStunned(Player player, Creature creature) {
+        publisher.publishEvent(new CreatureStunnedEvent(player, creature));
+    }
+
     public void creaturePoisoned(Player player, Creature creature) {
-        publisher.publishEvent(new StatusAppliedEvent(player, creature, StatusNames.POISONED));
+        publisher.publishEvent(new StatusAppliedEvent(player, creature, StatusNames.POISON));
     }
 
     public void creatureIgnited(Player player, Creature creature) {
-        publisher.publishEvent(new StatusAppliedEvent(player, creature, StatusNames.IGNITED));
+        publisher.publishEvent(new StatusAppliedEvent(player, creature, StatusNames.BURN));
     }
 
-    public void creatureStunned(Player player, Creature creature) {
-        publisher.publishEvent(new StatusAppliedEvent(player, creature, StatusNames.STUNNED));
+    public void creatureStunApplied(Player player, Creature creature) {
+        publisher.publishEvent(new StatusAppliedEvent(player, creature, StatusNames.STUN));
     }
 
+    public void gameOver(Player winner) {
+        publisher.publishEvent(new GameOverEvent(winner));
+    }
+
+    public void sendCreatureBuyOptions(WebSocketSession session, Creature[] options) {
+        System.out.println(options);
+        publisher.publishEvent(new GetCreatureBuyOptionsEvent(session, options));
+    }
 }

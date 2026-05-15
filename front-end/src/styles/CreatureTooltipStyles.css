@@ -1,0 +1,60 @@
+.creature-tooltip {
+    position: absolute;
+    left: calc(100% + 1.5vh);
+    top: 0;
+    width: 10vw;
+    background-color: var(--card-bg);
+    border: 0.2vh solid var(--text);
+    border-radius: 2vh;
+    padding: 1.5vh 1.5vw;
+    z-index: 100;
+    pointer-events: none;
+
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.creature-card:hover .creature-tooltip {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.tooltip-heading {
+    margin: 0 0 1vh 0;
+    font-size: 1.8vh;
+    color: var(--accent);
+    border-bottom: 0.1vh solid var(--text);
+    padding-bottom: 0.5vh;
+}
+
+.tooltip-abilities {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2vh;
+}
+
+.tooltip-ability {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3vh;
+}
+
+.ability-name {
+    font-size: 1.6vh;
+    font-weight: bold;
+    color: var(--text);
+}
+
+.ability-effects {
+    margin: 0;
+    padding-left: 1.5vh;
+    list-style: disc;
+}
+
+.ability-effects li {
+    font-size: 1.4vh;
+    color: var(--text);
+    opacity: 0.75;
+    line-height: 1.5;
+}

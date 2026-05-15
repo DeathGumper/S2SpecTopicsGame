@@ -18,6 +18,7 @@ public class Player {
     private boolean ready;
     private boolean owner = false;
     private BattleState battleState;
+    private float money;
 
     @JsonIgnore
     private WebSocketSession session;

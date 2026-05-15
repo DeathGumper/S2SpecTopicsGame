@@ -11,7 +11,7 @@ function TitleScreen({ setScene }) {
 
     return (
         <div id="title-screen">
-            <h1>Creature Battles</h1>
+            <h1 className="title">Creature Battles</h1>
             <button className="glow-text-hover menu-button" onClick={handleStartGame}>Start Game</button>
         </div>
     )

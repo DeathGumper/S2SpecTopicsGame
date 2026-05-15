@@ -1,9 +1,12 @@
 import { gameController } from '../controllers/GameController'
 import CreatureDisplay from './CreatureDisplay'
+import { websocketConnection } from '../controllers/WebSocketConnection'
 
 import HealthBar from './HealthBar'
 
 import '../styles/BattleStageStyles.css'
+import { useEffect, useState } from 'react'
+import StatusEffectPopup from './StatusEffectPopup'
 
 function BattleStage({ lobbyState, playerId }) {
     const player = lobbyState?.players.find(p => p.id === playerId)
@@ -12,22 +15,44 @@ function BattleStage({ lobbyState, playerId }) {
     const playerCreature = player?.creatures[player.activeCreatureIndex]
     const opponentCreature = opponent?.creatures[opponent.activeCreatureIndex]
 
-    console.log(player.battleState)
-    console.log(opponent.battleState)
+    const [currPopup, setCurrPopup] = useState(null)
+
+    useEffect(() => {
+        const handler = () => {
+            const updates = websocketConnection.getBattleUpdates();
+            updates.forEach(({ type, payload }) => {
+                if (type === 'CREATURE_BURNED') {
+                    setCurrPopup(<StatusEffectPopup statusName={"BURNED"} message={"Creature " + payload.creature.name + " has been burned for " + payload.damage + "!"}/>)
+                    setTimeout(() => {
+                        setCurrPopup(null)
+                    }, 5000)
+                } else if (type === 'CREATURE_STUNNED') {
+                    setCurrPopup(<StatusEffectPopup statusName={payload.statusName} message={"Creature " + payload.creature.name + " has been stunned and lost their turn."}/>)
+                    setTimeout(() => {
+                        setCurrPopup(null)
+                    }, 5000)
+                }
+            });
+        };
+
+        websocketConnection.addListener(handler);
+        return () => websocketConnection.removeListener(handler);
+    }, []);
+    
 
     return (
         <div className="battle-stage">
-            <h1 className="title">Battle!</h1>
             <h2 className="opponent-name">Opponent: {opponent?.name}</h2>
-            <div id="player-creature">
+            {currPopup != null && currPopup}
 
-                <HealthBar creatureData={playerCreature} />
-                <h2>Player Creature</h2>
+            <HealthBar creatureData={opponentCreature} x={5} y={5} w={40} h={5} />
+            <HealthBar creatureData={playerCreature} x={55} y={5} w={40} h={5} />
+            <h3 id="opponents-creatures-left">Creatures Left: {opponent?.creatures.length}</h3>
+            <div style={{ transform: 'scale(1.5)'}} id="player-creature" className="creature-display">
+                <h2>Your Creature</h2>
                 <CreatureDisplay creatureData={playerCreature} active={true} turn={player.battleState == 'MY_TURN'}/>
             </div>
-            <div id="opponent-creature">
-
-                <HealthBar creatureData={opponentCreature} />
+            <div id="opponent-creature" className="creature-display">
                 <h2>Opponent Creature</h2>
                 <CreatureDisplay creatureData={opponentCreature} active={false} turn={opponent.battleState == 'MY_TURN'} />
             </div>

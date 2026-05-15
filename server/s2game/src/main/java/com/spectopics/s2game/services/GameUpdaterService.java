@@ -79,6 +79,15 @@ public class GameUpdaterService {
                 System.out.println("The battle stage is over!");
                 LobbyStageService.EndBattleStage(this.lobbyState);
                 gameEventService.resultsStageStarted(this.lobbyState);
+
+                // this right here only supports 2 players
+                for (Player player: lobbyState.getPlayers()) {
+                    if (player.getLives() <= 0) {
+                        gameEventService.gameOver(player);
+                        StopUpdating();
+                        return;
+                    }
+                }
             }
         }
 

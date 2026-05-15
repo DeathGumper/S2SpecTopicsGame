@@ -1,6 +1,7 @@
 {
     "id": "fox",
     "name": "Fox",
+    "price": 50,
     "stats": {
         "maxHealth": 3000,
         "strength": 6000,

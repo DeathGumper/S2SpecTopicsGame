@@ -12,6 +12,17 @@ export class Stats {
         this.poison = poison;
     }
 
+    getDictDisplay() {
+        return {
+            "Max Health": this.maxHealth,
+            "Strength": this.strength,
+            "Defense": this.defense,
+            "Dexterity": this.dexterity,
+            "Speed": this.speed,
+            "Accuracy": this.accuracy
+        }
+    }
+
     static fromDict(data) {
         return new Stats(
             data.maxHealth,

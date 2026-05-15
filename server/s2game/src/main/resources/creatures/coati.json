@@ -1,6 +1,7 @@
 {
     "id": "coati",
     "name": "Coati",
+    "price": 60,
     "stats": {
         "maxHealth": 3000,
         "strength": 2000,
@@ -11,6 +12,6 @@
     },
     "abilities": {
         "Claw": "DamageEnemy-1200",
-        "Heal": "Heal-1000|Stun-10"
+        "Heal": "Heal-1000"
     }
 }

@@ -11,6 +11,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class BattleService {
 
+    private final GameEventService gameEventService;
+
+    public BattleService(GameEventService gameEventService) {
+        this.gameEventService = gameEventService;
+    }
+
     public void AssignOpponents(LobbyState lobbyState) {
         List<Player> players = lobbyState.getPlayers();
         // Currently only supports 2 players
@@ -66,9 +72,13 @@ public class BattleService {
             System.out.println(player.getName() + " is poisoned and now has " + player.GetActiveCreature().getStats().getPoison() + " poison stacks left!");
         }
 
-        // Start of opponents turn...
         // Take burn damage
-        opponent.GetActiveCreature().takeBurn();
+        float dmg = player.GetActiveCreature().takeBurn();
+        if (dmg > 0) {
+            gameEventService.creatureBurned(player, player.GetActiveCreature(), dmg);
+        }
+
+        // Start of opponents turn...
 
         // Check if the opponents active creatures is still alive after the turn.
         if (opponent.GetActiveCreature().getStats().getHealth() <= 0) {
@@ -88,6 +98,7 @@ public class BattleService {
         // Check if the opponents active creature is stunned and skip their turn if so.
         if (opponent.GetActiveCreature().checkStun()) {
             System.out.println(opponent.getName() + "'s active creature is stunned and loses their turn!");
+            gameEventService.creatureStunned(opponent, opponent.GetActiveCreature());
             // Still the players turn
             return;
         } 
