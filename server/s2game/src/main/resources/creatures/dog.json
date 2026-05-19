@@ -11,6 +11,8 @@
         "accuracy": 3000
     },
     "abilities": {
-        "Claw": "DamageEnemy-1500"
+        "Claw": "DamageEnemy-1500",
+        "Bark": "WeakenEnemy-500|Stun-10",
+        "Couch Potato": "Heal-1500"
     }
 }

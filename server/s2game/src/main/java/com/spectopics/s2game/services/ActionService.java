@@ -153,4 +153,14 @@ public class ActionService {
 
         return true;
     }
+
+    public boolean WeakenEnemy(Player player, String act) {
+        Player opponent = player.getOpponent();
+        if (opponent == null) return false;
+
+        float effectPower = Float.parseFloat(act.split("-")[1]);
+        opponent.GetActiveCreature().getStats().AdjustStrength(-effectPower);
+
+        return true;
+    }
 }

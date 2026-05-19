@@ -12,6 +12,7 @@
     },
     "abilities": {
         "Claw": "DamageEnemy-1200",
-        "Heal": "Heal-1000"
+        "Heal": "Heal-1000",
+        "Paw": "DamageEnemy-500|Stun-20|WeakenEnemy-250"
     }
 }

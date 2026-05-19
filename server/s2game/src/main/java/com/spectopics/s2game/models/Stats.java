@@ -72,7 +72,7 @@ public class Stats {
     
     public boolean AdjustStrength(float str) {
         /*
-        Adds str to strength. Ensures strength doesn't go below 0
+        Adds str to strength. Ensures strength doesn't go below 1
 
         Returns true if the full value was added. Otherwise returns false
          */
@@ -80,7 +80,7 @@ public class Stats {
             strength += str;
             return true;
         }
-        strength = 0;
+        strength = 1;
         return false;
     }
 
@@ -100,7 +100,7 @@ public class Stats {
     
     public boolean AdjustDefense(float def) {
         /*
-        Adds def to defense. Ensures defense doesn't go below 0
+        Adds def to defense. Ensures defense doesn't go below 1
 
         Returns true if the full value was added. Otherwise returns false
          */
@@ -108,7 +108,7 @@ public class Stats {
             defense += def;
             return true;
         }
-        defense = 0;
+        defense = 1;
         return false;
     }
 

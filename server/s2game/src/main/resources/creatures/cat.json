@@ -12,6 +12,7 @@
     },
     "abilities": {
         "Tail Whip": "DamageEnemy-1000|Stun-20",
-        "Loaf": "Heal-1000|SelfStun-10"
+        "Loaf": "Heal-1200|SelfStun-10",
+        "Knaw": "DamageEnemy-100|Poison-15"
     }
 }

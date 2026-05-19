@@ -11,6 +11,8 @@
         "accuracy": 5500
     },
     "abilities": {
-        "Fire Breath": "DamageEnemy-1000|Ignite-10"
+        "Claw": "DamageEnemy-1500",
+        "Fire Breath": "DamageEnemy-500|Ignite-5",
+        "Roar": "WeakenEnemy-250|Stun-30"
     }
 }
