@@ -12,6 +12,7 @@
     },
     "abilities": {
         "Claw": "DamageEnemy-1300|Poison-5",
-        "Chomp": "DamageEnemy-2500|SelfStun-80"
+        "Chomp": "DamageEnemy-2500|SelfStun-80",
+        "False Head": "DamageEnemy-1800|DamagePlayer-200|Stun-10"
     }
 }

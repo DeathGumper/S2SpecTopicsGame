@@ -11,6 +11,8 @@
         "accuracy": 8000
     },
     "abilities": {
-        "Bite": "DamageEnemy-800|Poison-10"
+        "Bite": "DamageEnemy-800|Poison-10",
+        "Rapid Scratch": "DamageEnemy-1400",
+        "Spit": "DamageEnemy-200|Poison-20"
     }
 }
