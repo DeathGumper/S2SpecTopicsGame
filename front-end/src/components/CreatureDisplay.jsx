@@ -3,11 +3,11 @@ import CreatureTooltip from './CreatureTooltip'
 
 import '../styles/CreatureDisplayStyles.css'
 
-function CreatureDisplay({ creatureData, turn, image, blank }) {
+function CreatureDisplay({ creatureData, turn, image, blank, width }) {
     return (
         <>
         {!blank ? (
-            <div className={turn ? "creature-card glow-border" : "creature-card"}>
+            <div style={{width: width + "vw"}} className={turn ? "creature-card glow-border" : "creature-card"}>
                 <h2 className="creature-name">{creatureData.name}</h2>
                 {image && <img src={image} alt={creatureData.name} className="creature-image" />}
                 <div className="creature-details">
@@ -18,10 +18,10 @@ function CreatureDisplay({ creatureData, turn, image, blank }) {
                         {creatureData.stats.poison > 0 && <div className="status-effect poison-effect">{creatureData.stats.poison}</div>}
                     </div>
                 </div>
-                <CreatureTooltip creature={creatureData} />
+                {/* <CreatureTooltip creature={creatureData} /> */}
             </div>
         ): (
-            <div className="creature-card"></div>
+            <div style={{width: width + "vw"}} className="creature-card"></div>
         )}
         </>
     )

@@ -1,17 +1,18 @@
 .creature-card {
-    border: 0.2vh solid #ccc;
-    border-radius: 4vh;
     padding: 1vh;
     margin: auto;
-    width: 15vw;
-    height: 30vh;
-    background-color: var(--card-bg);
+    aspect-ratio: 3/4;
+    background-image: url('../assets/buystage/CreatureCard.png');
+    z-index: 1;
     position: relative;
     overflow: visible;
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 .creature-card .creature-name {
-    font-size: 5vh;
+    font-size: 3vh;
+    padding: 2vh;
 }
 
 .glow-border {

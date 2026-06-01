@@ -57,13 +57,11 @@ public class GameUpdaterService {
             boolean allReady = true;
             // iterate thru all players, if any player is not ready then return
             for (Player player : lobbyState.getPlayers()) {
-                System.out.println(player.getName() + ": " + player.isReady());
                 if (!player.isReady()) allReady = false;
             }
 
             // Success, all players are ready, start the battle stage
             if (allReady || this.lobbyState.getStageTimer() <= 0) {
-                System.out.println("All players ready, starting battle stage!");
                 LobbyStageService.GoToBattleStage(this.lobbyState);
                 this.battleService.AssignOpponents(this.lobbyState);
                 try {
@@ -76,7 +74,6 @@ public class GameUpdaterService {
 
         if (this.lobbyState.getStage() == StageState.BATTLESTAGE) {
             if (this.battleService.checkAllBattlesDone(this.lobbyState)) {
-                System.out.println("The battle stage is over!");
                 LobbyStageService.EndBattleStage(this.lobbyState);
                 gameEventService.resultsStageStarted(this.lobbyState);
 

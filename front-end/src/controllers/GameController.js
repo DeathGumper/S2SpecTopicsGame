@@ -28,6 +28,10 @@ function GameController() {
         websocketConnection.sendMessage(new ClientMessage('GET_CREATURE_BUY_OPTIONS', null))
     }
 
+    this.reroll = function() {
+        websocketConnection.sendMessage(new ClientMessage('GET_CREATURE_BUY_OPTIONS', "true"))
+    }
+
 }
 
 export const gameController = new GameController();

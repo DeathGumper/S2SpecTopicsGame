@@ -42,13 +42,13 @@ function CreatureTooltip({ creature }) {
             </h3>
             <div>
                 
-                {stats && Object.entries(stats?.getDictDisplay()).map(([name, stat]) => (
+                {/* {stats && Object.entries(stats?.getDictDisplay()).map(([name, stat]) => (
                     <div key={name} className="tooltip-ability">
                         <ul className="ability-effects">
                             {name}: {stat}
                         </ul>
                     </div>
-                ))}
+                ))} */}
             </div>
         </div>
     )

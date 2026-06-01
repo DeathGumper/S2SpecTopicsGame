@@ -1,6 +1,8 @@
 import { gameController } from "../controllers/GameController"
 import CreatureDisplay from "./CreatureDisplay"
 import StageTimer from "./StageTimer"
+import RefreshButton from "../assets/buystage/RefreshButton.png"
+import ReadupButton from "../assets/buystage/ReadyUpButton.png"
 
 import '../styles/BuyStageStyles.css'
 
@@ -23,7 +25,7 @@ function BuyStage({ buyOptions, lobbyState, playerId }) {
             <div id="creature-display">
                 {player.creatures.map((creature, index) => (
                     <div key={index}>
-                        <CreatureDisplay key={index} creatureData={creature} active={false} blank={creature == null}/>
+                        <CreatureDisplay key={index} creatureData={creature} active={false} blank={creature == null} width={10}/>
                     </div>
                     
                 ))}
@@ -32,15 +34,24 @@ function BuyStage({ buyOptions, lobbyState, playerId }) {
             <div id="creature-buying">
                 {buyOptions != null && buyOptions.map((creature, index) => (
                     <div key={index}>
-                        {creature.price <= player.money ? <button className="menu-button glow-text-hover" onClick={() => gameController.buyCreature(creature)}>Buy Creature!</button> : <h2>Not enough money!</h2>}
-                        <CreatureDisplay creatureData={creature} active={false} />
+                        <button
+                            className="btn-w-bg buy-creature-button menu-button glow-text-hover"
+                            disabled={creature.price > player.money}
+                            onClick={() => gameController.buyCreature(creature)}
+                        ></button>
+                        <CreatureDisplay creatureData={creature} active={false} width={10} />
                         <h2>${creature.price}</h2>
                     </div>
                 ))}
             </div>
             <div id="buttons">
-                <button className="menu-button glow-text-hover" id="refresh" onClick={gameController.getCreatureBuyOptions}>Refresh!</button>
-                <button className="menu-button glow-text-hover" id="ready-up" onClick={() => gameController.readyUp(lobbyState.lobbyId)}>{player.ready ? "You are ready!" : "Ready Up!"}</button>
+                <button className="btn-w-bg menu-button glow-text-hover" id="refresh" onClick={gameController.reroll}>
+                    <img src={RefreshButton}></img>
+                    <h2>$30</h2>
+                </button>
+                <button className="btn-w-bg menu-button glow-text-hover" id="ready-up" onClick={() => gameController.readyUp(lobbyState.lobbyId)}>
+                    {player.ready ? "You are ready!" : "Ready Up"}
+                </button>
             </div>
         </div>
     )

@@ -7,7 +7,7 @@
     border: 0.2vh solid var(--text);
     border-radius: 2vh;
     padding: 1.5vh 1.5vw;
-    z-index: 100;
+    z-index: 10;
     pointer-events: none;
 
     opacity: 0;
