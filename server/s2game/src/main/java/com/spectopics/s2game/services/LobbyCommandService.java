@@ -23,7 +23,7 @@ public class LobbyCommandService {
         this.actionService = actionService;
     }
 
-    public void getCreatureBuyOptions(WebSocketSession session) {
+    public void getCreatureBuyOptions(Boolean reroll, WebSocketSession session) {
         Player player = PlayerService.GetPlayerBySession(session);
         LobbyState lobby = LobbyService.GetLobbyByPlayerId(player.getId());
 
@@ -34,7 +34,16 @@ public class LobbyCommandService {
 
         Creature[] buyOptions = CreatureService.GetRandomCreatureOptions(5);
 
+        if (reroll == true) {
+            if (player.getMoney() < 30) {
+                System.out.println("Player is broke hahahaha!");
+                return;
+            }
+            player.setMoney(player.getMoney() - 30);
+        }
+
         gameEventService.sendCreatureBuyOptions(session, buyOptions);
+        gameEventService.sendLobbyStateToClients(lobby);
     }
 
     public void handleCreateLobby(CreateLobbyPayload payload, WebSocketSession session) throws Exception {

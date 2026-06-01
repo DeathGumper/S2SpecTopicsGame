@@ -1,64 +1,141 @@
+/* =========================================================
+   CREATURE DISPLAY
+========================================================= */
+
 #buy-stage #creature-display {
     position: absolute;
-    top: 64vh;
+
+    top: 50vh;
     left: 50%;
+    height: 55vh;
+
+    padding: 4vw;
+
     transform: translate(-50%, 0);
+
     display: grid;
-    justify-content: center;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+
+    grid-template-columns: repeat(5, 1fr);
     grid-template-rows: 1fr;
-    gap: 2vh;
-    border: 0.2vh solid var(--text);
-    border-top-right-radius: 4vw;
-    border-top-left-radius: 4vw;
-    border-bottom: 0;
-    padding: 2vh;
+    box-sizing: border-box;
+
+    justify-items: center;
+    align-items: center;
 }
 
-#buy-stage #creature-buying {
-    transform-origin: left center;
-    transform: scale(.6);
+/* background layer */
+#buy-stage #creature-display::before {
+    content: "";
+
     position: absolute;
-    top: 10vh;
-    left: 0vw;
-    padding: none;
-    display: grid;
-    justify-content: center;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr;
-    gap: 2vh;
-    border: .2vh solid var(--text);
-    border-top-right-radius: 4vh;
-    border-bottom-right-radius: 4vh;
-    border-left: none;
-    padding: 2vh;
+    inset: 0;
+
+    background-image: url("../assets/buystage/CreatureDisplayPanel.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+
+    z-index: -1;
 }
+
+/* =========================================================
+   CREATURE BUYING
+========================================================= */
+
+#buy-stage #creature-buying {
+    position: absolute;
+
+    top: 12vh;
+    left: 50%;
+
+    transform: translate(-50%, 0);
+
+    display: grid;
+
+    justify-content: center;
+
+    grid-template-columns:
+        1fr 1fr 1fr 1fr 1fr;
+
+    grid-template-rows: 1fr;
+
+    gap: 0;
+
+    padding: 2vw;
+
+    border-left: none;
+}
+
+/* background layer */
+#buy-stage #creature-buying::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background-image: url("../assets/buystage/CreatureBuyingPanel.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+
+    z-index: -1;
+}
+
+/* =========================================================
+   INFORMATION PANEL
+========================================================= */
 
 #buy-stage #information {
     position: absolute;
+
+    right: 0;
+
+    width: 16vw;
+
     padding: 1vh;
     padding-bottom: 4vh;
-    width: 16vw;
-    right: 0;
+
     border: 0.2vh solid var(--text);
+
     border-bottom-left-radius: 2vw;
+
     border-right: none;
     border-top: none;
 }
 
+/* =========================================================
+   REFRESH BUTTON
+========================================================= */
+
 #buy-stage #refresh {
     position: absolute;
+
     top: 50vh;
     left: 3vw;
 }
 
+#buy-stage #refresh img {
+    width: 15vw;
+}
+
+/* =========================================================
+   BUY CREATURE BUTTON
+========================================================= */
+
+.buy-creature-button {
+    height: 4vw;
+    aspect-ratio: 2.61 / 1;
+
+    background-image:
+        url("../assets/buystage/BuyCreatureButton.png");
+}
+
+/* =========================================================
+   READY UP BUTTON
+========================================================= */
+
 #buy-stage #ready-up {
     position: absolute;
 
-    border-radius: 2vh;
-    border: 0.2vh solid var(--text);
-
-    left: 50vw;
     top: 50vh;
-    
+    left: 85vw;
+    font-size: 3vw;
 }

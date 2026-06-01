@@ -3,11 +3,17 @@
   src: url('/fonts/PixelOperator.ttf') format('truetype');
 }
 
+@font-face {
+  font-family: 'PixelOperatorBold';
+  src: url('/fonts/PixelOperator-Bold.ttf') format('truetype');
+}
+
 :root {
   --text: #ecfdf5;                 /* soft mint white */
   --text-h: #052e16;              /* deep forest for headings */
 
-  --bg: #0f1f14;                  /* dark green-black background */
+  --old-bg: #0f1f14;   /* dark green-black background */
+  --bg: #c8a07a;
   --card-bg: #1f3a2a;              /* subtle green border */
 
   --code-bg: #133221;             /* darker panel */
@@ -23,7 +29,7 @@
     rgba(0, 0, 0, 0.4) 0 10px 20px -5px,
     rgba(0, 0, 0, 0.2) 0 4px 8px -2px;
 
-  --font: 'PixelOperator';
+  --font: 'PixelOperatorBold';
   --heading: 'PixelOperator', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
@@ -89,6 +95,11 @@ body {
   min-height: 100vh;
   background-color: var(--bg);
   margin: 0;
+  background-image: url('assets/backgrounds/BoardBackground.png');
+  
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 h1 {

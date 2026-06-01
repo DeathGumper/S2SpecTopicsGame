@@ -124,7 +124,11 @@ public class SocketConnectionHandler extends TextWebSocketHandler {
                 break;
 
             case "GET_CREATURE_BUY_OPTIONS":
+                String rerollStr = root.get("payload").asString();
+                Boolean reroll = Boolean.parseBoolean(rerollStr);
+
                 lobbyCommandService.getCreatureBuyOptions(
+                    reroll,
                     session
                 );
                 break;
