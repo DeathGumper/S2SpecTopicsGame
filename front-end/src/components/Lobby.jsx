@@ -3,7 +3,12 @@ import { gameController } from "../controllers/GameController"
 import '../styles/LobbyStyles.css'
 
 function Lobby({ lobbyState, playerId }) {
+    // This scene displays all of the players in the lobby
     const player = lobbyState?.players.find(p => p.id === playerId)
+
+    // Visuals
+    // Displays the players in a list
+    // Displays to the owner of the lobby only if the lobby is ready to start.
     return (
         <div id="lobby-scene">
             <h1 id="lobby-name">{lobbyState.name}</h1>

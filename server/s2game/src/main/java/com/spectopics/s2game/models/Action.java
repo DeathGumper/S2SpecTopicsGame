@@ -1,5 +1,6 @@
 package com.spectopics.s2game.models;
 
+// Currently unused, but left here just in case.
 public class Action {
     int startTurn = -1;
     int currentTurn = 0;

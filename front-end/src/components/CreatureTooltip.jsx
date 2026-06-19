@@ -1,5 +1,9 @@
 import '../styles/CreatureTooltipStyles.css'
+// IMPORTANT!
+// THIS IS UNUSED, I turned this off beacuse it was causing too many bugs and was unnecessary.
 
+
+// A little dictionary of sorts to get the info based on the attack.
 function describeAction(actionStr) {
     const [action, value] = actionStr.split('-')
     switch (action) {
@@ -17,9 +21,13 @@ function parseAbility(actionString) {
     return actionString.split('|').map(describeAction)
 }
 
+
+// React class.
 function CreatureTooltip({ creature }) {
+    // Get the abilities and stats
     var abilities = creature.abilities
     var stats = creature.stats
+    // If no abilites, then return
     if (!abilities || Object.keys(abilities).length === 0) return null
 
     return (
@@ -40,16 +48,6 @@ function CreatureTooltip({ creature }) {
             <h3 className="tooltip-heading">
                 Stats
             </h3>
-            <div>
-                
-                {/* {stats && Object.entries(stats?.getDictDisplay()).map(([name, stat]) => (
-                    <div key={name} className="tooltip-ability">
-                        <ul className="ability-effects">
-                            {name}: {stat}
-                        </ul>
-                    </div>
-                ))} */}
-            </div>
         </div>
     )
 }

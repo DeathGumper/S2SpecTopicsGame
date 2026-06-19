@@ -14,6 +14,7 @@ public class BattleService {
     private final GameEventService gameEventService;
 
     public BattleService(GameEventService gameEventService) {
+        // Assign a value to the game event service, using spring bean dependency injection.
         this.gameEventService = gameEventService;
     }
 
@@ -22,8 +23,13 @@ public class BattleService {
         // Currently only supports 2 players
         Player p1 = players.get(0);
         Player p2 = players.get(1);
+
+        // They are fighting each other
+
         p1.setOpponent(p2);
         p2.setOpponent(p1);
+
+        // Fail cases, this is impossible tho.
         if (p1.getCreatures().length == 0) {
             System.out.println(p1.getName() + " has no creatures, automatically loses!");
             p1.setBattleState(BattleState.LOST);
@@ -33,6 +39,7 @@ public class BattleService {
             p1.setBattleState(BattleState.WON);
             p2.setBattleState(BattleState.LOST);
         } else {
+            // p1 always goes first, maybe make a coin flip later
             p1.setBattleState(BattleState.MY_TURN);
             p2.setBattleState(BattleState.OPPONENT_TURN);
 
@@ -42,16 +49,22 @@ public class BattleService {
     }
 
     public boolean checkAllBattlesDone(LobbyState lobbyState) {
+        // Itterate thru
         for (Player player : lobbyState.getPlayers()) {
             BattleState state = player.getBattleState();
+
+            // Are they still battling?
             if (state != BattleState.WON && state != BattleState.LOST) {
                 return false;
             }
         }
+
+        // All battles are done!
         return true;
     }
 
     public void RemoveLives(LobbyState lobbyState) {
+        // Remove lives from players that lost
         for (Player player : lobbyState.getPlayers()) {
             if (player.getBattleState() == BattleState.LOST) {
                 player.setLives(player.getLives() - 1);
@@ -61,6 +74,7 @@ public class BattleService {
     }
 
     public void NextTurn(Player player) {
+        // This should be broken up into more functions, but for now it does a lot.
         Player opponent = player.getOpponent();
 
         // This is post player turn but before the next turn starts.
@@ -78,8 +92,9 @@ public class BattleService {
             gameEventService.creatureBurned(player, player.GetActiveCreature(), dmg);
         }
 
-        // Start of opponents turn...
+        // TODO: BUG, when creature dies from burn, it doesnt go to the next creature!
 
+        // Start of opponents turn...
         // Check if the opponents active creatures is still alive after the turn.
         if (opponent.GetActiveCreature().getStats().getHealth() <= 0) {
             System.out.println(opponent.getName() + "'s active creature fainted!");
