@@ -8,10 +8,14 @@ import com.spectopics.s2game.enums.BattleState;
 
 import lombok.Data;
 
+// CORE DATA FOR PLAYER!
+
 @Data
 public class Player {
     private String name;
+    // Tracked by id, never name.
     private String id;
+
     private int lives;
     private Creature[] creatures;
     private int activeCreatureIndex;
@@ -20,8 +24,11 @@ public class Player {
     private BattleState battleState;
     private float money;
 
+    // Dont send this to client, not needed.
     @JsonIgnore
     private WebSocketSession session;
+
+    // infite loop if we try to send opponent data, so just send opponent id for reference.
     @JsonIgnore
     private Player opponent;
 
@@ -32,6 +39,8 @@ public class Player {
 
     public Player(String name, WebSocketSession session) {
         this.name = name;
+
+        // session is server only, id is what is sent from clients.
         this.id = session.getId();
         this.session = session;
         this.creatures = new Creature[5];
@@ -41,10 +50,12 @@ public class Player {
     }
 
     public boolean NextCreature() {
+        // Next creature, when a creature dies.
         return SetActiveCreature(activeCreatureIndex + 1);
     }
 
     public boolean SetActiveCreature(int index) {
+        // Stops from going to an index that doesnt exist, or is null (no creature there).
         if (index >= creatures.length)
             return false;
         if (creatures[index] == null)
@@ -55,10 +66,12 @@ public class Player {
     }
 
     public Creature GetActiveCreature() {
+        // Just returns the indexed creature.
         return creatures[activeCreatureIndex];
     }
 
     public boolean AddCreature(Creature creature) {
+        // Adds the creature to the next open slot.
         for (int i = 0; i < this.creatures.length; i++) {
             if (this.creatures[i] == null) {
                 this.creatures[i] = creature;
@@ -70,10 +83,13 @@ public class Player {
     }
 
     public void setReady(boolean ready) {
+        // ready up
+        
         this.ready = ready;
     }
 
     public boolean isReady() {
+        // return ready status
         return this.ready;
     }
 }

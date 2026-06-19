@@ -2,7 +2,10 @@ import { gameController } from '../controllers/GameController'
 import CreatureTooltip from './CreatureTooltip'
 
 import '../styles/CreatureDisplayStyles.css'
-
+/**
+ * This class displays the creature, it shows their stats and name.
+ * The params change how it is displayed to make it versitile for several different scenes.
+ */
 function CreatureDisplay({ creatureData, turn, image, blank, width }) {
     return (
         <>
@@ -18,7 +21,6 @@ function CreatureDisplay({ creatureData, turn, image, blank, width }) {
                         {creatureData.stats.poison > 0 && <div className="status-effect poison-effect">{creatureData.stats.poison}</div>}
                     </div>
                 </div>
-                {/* <CreatureTooltip creature={creatureData} /> */}
             </div>
         ): (
             <div style={{width: width + "vw"}} className="creature-card"></div>

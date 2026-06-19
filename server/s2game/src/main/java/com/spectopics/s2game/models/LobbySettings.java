@@ -2,6 +2,9 @@ package com.spectopics.s2game.models;
 
 import lombok.Data;
 
+// easy spot to add/change settings for dev.
+// maybe could be part of a settings menu.
+
 @Data
 public class LobbySettings {
     private float buyStageTimer = 300f; // timer of each buystage

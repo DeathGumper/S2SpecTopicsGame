@@ -10,9 +10,6 @@ public class LobbyStageService {
     /**
      * Starts the game if the request maker is the lobby owner and the lobby is currently in the lobby stage. 
      * Changes the stage to the buy stage and sets the stage timer to the amount of time the buy stage lasts.
-     * @param lobbyState
-     * @param requestMaker
-     * @return
      */
     public static boolean StartGame(LobbyState lobbyState, Player requestMaker) throws Exception{
         System.out.println(requestMaker.isOwner());

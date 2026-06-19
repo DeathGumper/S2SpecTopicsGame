@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { ALLSCENES } from '../helpers/constants'
 import '../styles/InstructionsStyles.css'
 
+// Hardcoded slide instructions
 const slides = [
     {
         title: 'The Lobby',
@@ -38,6 +39,7 @@ const slides = [
     }
 ]
 
+// Displays the instructions
 function Instructions({ setScene }) {
     const [current, setCurrent] = useState(0)
     const [direction, setDirection] = useState(null)

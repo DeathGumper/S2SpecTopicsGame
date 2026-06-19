@@ -19,6 +19,11 @@ import com.spectopics.s2game.models.Creature;
 import com.spectopics.s2game.models.LobbyState;
 import com.spectopics.s2game.models.Player;
 
+/* 
+ * The calls here are for calling the publisher and making the event payloads so the publisher can differentiate.
+ * Only one bean so that there isnt an infinte loop!
+ * Every method is pretty self explanatory, just makes the event payload and then calls the publisher.
+ */
 @Service
 public class GameEventService {
     private ApplicationEventPublisher publisher;
@@ -78,7 +83,6 @@ public class GameEventService {
     }
 
     public void sendCreatureBuyOptions(WebSocketSession session, Creature[] options) {
-        System.out.println(options);
         publisher.publishEvent(new GetCreatureBuyOptionsEvent(session, options));
     }
 }
